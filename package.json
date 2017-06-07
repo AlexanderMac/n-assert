@@ -1,0 +1,32 @@
+{
+  "name": "n-assert",
+  "version": "0.0.1",
+  "description": "Node assertion helper library",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexanderMac/n-assert.git"
+  },
+  "keywords": [
+    "node",
+    "assert",
+    "test"
+  ],
+  "author": "Alexander Mac",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlexanderMac/n-assert/issues"
+  },
+  "homepage": "https://github.com/AlexanderMac/n-assert#readme",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "mongoose": "^4.10.5",
+    "should": "^11.2.1",
+    "sinon": "^2.3.2"
+  },
+  "devDependencies": {}
+}
