@@ -7,6 +7,7 @@ var sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
 
+// TODO: deprecated
 exports.getList = (modelType, sortField, selectFields) => {
   var query = modelType.find({});
   if (sortField) {
@@ -18,6 +19,7 @@ exports.getList = (modelType, sortField, selectFields) => {
   return query.exec();
 };
 
+// TODO: deprecated
 exports.getSingleById = (modelType, id) => {
   return modelType.findById(id);
 };
@@ -52,6 +54,7 @@ exports.assert = (actual, expected) => {
   });
 };
 
+// TODO: deprecated
 exports.sinonMatch = (expected) => {
   var self = this;
   return sinon.match(actual => {
@@ -64,6 +67,7 @@ exports.sinonMatch = (expected) => {
   });
 };
 
+// TODO: deprecated
 exports.assertId = (actual, expected) => {
   if (expected === '_mock_') {
     should(actual.toString()).match(/^[a-z|\d]{24}$/);
@@ -82,6 +86,7 @@ exports.assertResponse = (res, expectedStatus, expectedBody) => {
   }
 };
 
+// TODO: make private
 exports.isSimplePrim = (prim) => {
   return _.isBoolean(prim) ||
         _.isNumber(prim) ||
@@ -89,6 +94,7 @@ exports.isSimplePrim = (prim) => {
         _.isDate(prim);
 };
 
+// TODO: deprecated
 exports.buildQuery = (params) => {
   var query = '';
   _.each(params, (value, key) => {
@@ -110,6 +116,7 @@ exports.processError = (actual, expected, done) => {
   }
 };
 
+// TODO: deprecated
 exports.processErrorNoMessage = (actual, expected, done) => {
   if (expected instanceof Error) {
     try {
