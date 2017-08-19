@@ -12,8 +12,8 @@
   "scripts": {
     "test": "npm run lint && npm run tests",
     "lint": "./node_modules/.bin/eslint --ext .js index.js test/ || true",
-    "tests": "NODE_ENV=test ./node_modules/.bin/mocha",
-    "coverage": "./node_modules/.bin/nyc npm test"
+    "tests": "NODE_ENV=test ./node_modules/.bin/mocha || true",
+    "coverage": "./node_modules/.bin/nyc npm run tests"
   },
   "repository": {
     "type": "git",

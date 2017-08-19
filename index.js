@@ -1,15 +1,15 @@
 'use strict';
 
-var _        = require('lodash');
-var mongoose = require('mongoose');
-var should   = require('should');
-var sinon    = require('sinon');
+let _        = require('lodash');
+let mongoose = require('mongoose');
+let should   = require('should');
+let sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
 
 // TODO: deprecated
 exports.getList = (modelType, sortField, selectFields) => {
-  var query = modelType.find({});
+  let query = modelType.find({});
   if (sortField) {
     query.sort(sortField);
   }
@@ -24,10 +24,11 @@ exports.getSingleById = (modelType, id) => {
   return modelType.findById(id);
 };
 
+// TODO: test it
 exports.assert = (actual, expected) => {
-  var self = this;
+  let self = this;
 
-  if (_assertIfExpectedIsUndefined(actual, expected) ||
+  if (_assertIfExpectedIsNil(actual, expected) ||
     _assertIfExpectedIsArray(actual, expected) ||
     _assertIfExpectedIsSimplePrim(actual, expected)
   ) {
@@ -38,25 +39,25 @@ exports.assert = (actual, expected) => {
     actual = actual.toObject();
   }
 
-  var expectedKeys = _.keys(expected);
-  should(actual).have.properties(expectedKeys);
+  let expectedFields = _.keys(expected);
+  should(actual).have.properties(expectedFields);
 
-  _.each(expectedKeys, (key) => {
-    var actualVal = actual[key];
-    var expectedVal = expected[key];
+  _.each(expectedFields, field => {
+    let actualVal = actual[field];
+    let expectedVal = expected[field];
 
     if (_.isArray(expectedVal)) {
       self.assert(actualVal, expectedVal);
       return;
     }
 
-    _assert(key, actualVal, expectedVal);
+    _assert(field, actualVal, expectedVal);
   });
 };
 
 // TODO: deprecated
 exports.sinonMatch = (expected) => {
-  var self = this;
+  let self = this;
   return sinon.match(actual => {
     try {
       self.assert(actual, expected);
@@ -67,36 +68,36 @@ exports.sinonMatch = (expected) => {
   });
 };
 
-// TODO: deprecated
+// TODO: make private
 exports.assertId = (actual, expected) => {
   if (expected === '_mock_') {
     should(actual.toString()).match(/^[a-z|\d]{24}$/);
   } else {
-    should(actual.toString()).eql(expected.toString());
+    should(actual.toString()).equal(expected.toString());
   }
 };
 
 exports.assertResponse = (res, expectedStatus, expectedBody) => {
-  if (expectedStatus !== 203) {
+  if (expectedStatus === 204) {
+    should(res.headers['content-type']).be.undefined();
+    should(res.body).be.undefined();
+  } else {
     should(res.headers['content-type']).match(/application\/json/);
     exports.assert(res.body, expectedBody);
-  } else {
-    should(res.headers['content-type']).be.undefined;
-    should(res.body).be.undefined;
   }
 };
 
 // TODO: make private
 exports.isSimplePrim = (prim) => {
   return _.isBoolean(prim) ||
-        _.isNumber(prim) ||
-        _.isString(prim) ||
-        _.isDate(prim);
+         _.isNumber(prim) ||
+         _.isString(prim) ||
+         _.isDate(prim);
 };
 
 // TODO: deprecated
 exports.buildQuery = (params) => {
-  var query = '';
+  let query = '';
   _.each(params, (value, key) => {
     query += key + '=' + value + '&';
   });
@@ -139,47 +140,48 @@ exports.resolveOrReject = (err, resolve, reject) => {
   }
 };
 
-var _assert = (key, actualVal, expectedVal) => {
-  if (key === '_id' || expectedVal instanceof mongoose.Types.ObjectId) {
-    exports.assertId(actualVal, expectedVal);
-  } else if (key === '__v') {
-    should(actualVal).instanceOf(Number);
-  } else if (key === 'createdAt') {
-    should(actualVal).instanceOf(Date);
-  } else if (key === 'updatedAt') {
-    should(actualVal).instanceOf(Date);
-  } else if (expectedVal instanceof RegExp) {
-    should(actualVal).match(expectedVal);
-  } else if (expectedVal === '_mock_') {
-    should(actualVal).be.ok;
+let _assert = (field, actual, expected) => {
+  if (field === '_id' || expected instanceof mongoose.Types.ObjectId) {
+    exports.assertId(actual, expected);
+  } else if (field === '__v') {
+    should(actual).instanceOf(Number);
+  } else if (field === 'createdAt') {
+    should(actual).instanceOf(Date);
+  } else if (field === 'updatedAt') {
+    should(actual).instanceOf(Date);
+  } else if (expected instanceof RegExp) {
+    should(actual).match(expected);
+  } else if (expected === '_mock_') {
+    should(actual).be.ok();
   } else {
-    exports.assert(actualVal, expectedVal);
+    exports.assert(actual, expected);
   }
 };
 
-var _assertIfExpectedIsUndefined = (actual, expected) => {
-  if (!expected) {
-    should(actual).not.be.ok;
-    return true;
+let _assertIfExpectedIsNil = (actual, expected) => {
+  if (!_.isNil(expected)) {
+    return false;
   }
-  return false;
+  should(actual).not.be.ok();
+  return true;
 };
 
-var _assertIfExpectedIsArray = (actual, expected) => {
-  if (_.isArray(expected)) {
-    should(actual).have.length(expected.length);
-    for (var i = 0; i < expected.length; i++) {
-      exports.assert(actual[i], expected[i]);
-    }
-    return true;
+let _assertIfExpectedIsArray = (actual, expected) => {
+  if (!_.isArray(expected)) {
+    return false;
   }
-  return false;
+  should(actual).have.ownProperty('length');
+  should(actual.length).be.greaterThanOrEqual(expected.length);
+  for (let i = 0; i < expected.length; i++) {
+    exports.assert(actual[i], expected[i]);
+  }
+  return true;
 };
 
-var _assertIfExpectedIsSimplePrim = (actual, expected) => {
-  if (exports.isSimplePrim(expected)) {
-    should(actual).eql(expected);
-    return true;
+let _assertIfExpectedIsSimplePrim = (actual, expected) => {
+  if (!exports.isSimplePrim(expected)) {
+    return false;
   }
-  return false;
+  should(actual).equal(expected);
+  return true;
 };
