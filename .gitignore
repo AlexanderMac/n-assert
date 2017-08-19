@@ -3,6 +3,7 @@ logs
 *.log
 tmp
 .tmp
+.nyc_output
 todo
 .DS_STORE
 
