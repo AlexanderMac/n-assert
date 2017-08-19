@@ -3,28 +3,9 @@
 let _        = require('lodash');
 let mongoose = require('mongoose');
 let should   = require('should');
-let sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
 
-// TODO: deprecated
-exports.getList = (modelType, sortField, selectFields) => {
-  let query = modelType.find({});
-  if (sortField) {
-    query.sort(sortField);
-  }
-  if (selectFields) {
-    query.select(selectFields);
-  }
-  return query.exec();
-};
-
-// TODO: deprecated
-exports.getSingleById = (modelType, id) => {
-  return modelType.findById(id);
-};
-
-// TODO: test it
 exports.assert = (actual, expected) => {
   let self = this;
 
@@ -55,28 +36,6 @@ exports.assert = (actual, expected) => {
   });
 };
 
-// TODO: deprecated
-exports.sinonMatch = (expected) => {
-  let self = this;
-  return sinon.match(actual => {
-    try {
-      self.assert(actual, expected);
-      return true;
-    } catch (err) {
-      return false;
-    }
-  });
-};
-
-// TODO: make private
-exports.assertId = (actual, expected) => {
-  if (expected === '_mock_') {
-    should(actual.toString()).match(/^[a-z|\d]{24}$/);
-  } else {
-    should(actual.toString()).equal(expected.toString());
-  }
-};
-
 exports.assertResponse = (res, expectedStatus, expectedBody) => {
   if (expectedStatus === 204) {
     should(res.headers['content-type']).be.undefined();
@@ -87,42 +46,10 @@ exports.assertResponse = (res, expectedStatus, expectedBody) => {
   }
 };
 
-// TODO: make private
-exports.isSimplePrim = (prim) => {
-  return _.isBoolean(prim) ||
-         _.isNumber(prim) ||
-         _.isString(prim) ||
-         _.isDate(prim);
-};
-
-// TODO: deprecated
-exports.buildQuery = (params) => {
-  let query = '';
-  _.each(params, (value, key) => {
-    query += key + '=' + value + '&';
-  });
-  return _.trimEnd(query, '&');
-};
-
 exports.processError = (actual, expected, done) => {
   if (expected instanceof Error) {
     try {
       should(actual).eql(expected);
-      done();
-    } catch (err) {
-      done(err);
-    }
-  } else {
-    done(actual);
-  }
-};
-
-// TODO: deprecated
-exports.processErrorNoMessage = (actual, expected, done) => {
-  if (expected instanceof Error) {
-    try {
-      should(actual.name).eql(expected.name);
-      should(actual.status).eql(expected.status);
       done();
     } catch (err) {
       done(err);
@@ -140,9 +67,16 @@ exports.resolveOrReject = (err, resolve, reject) => {
   }
 };
 
+let _isSimplePrim = (prim) => {
+  return _.isBoolean(prim) ||
+         _.isNumber(prim) ||
+         _.isString(prim) ||
+         _.isDate(prim);
+};
+
 let _assert = (field, actual, expected) => {
   if (field === '_id' || expected instanceof mongoose.Types.ObjectId) {
-    exports.assertId(actual, expected);
+    _assertId(actual, expected);
   } else if (field === '__v') {
     should(actual).instanceOf(Number);
   } else if (field === 'createdAt') {
@@ -155,6 +89,14 @@ let _assert = (field, actual, expected) => {
     should(actual).be.ok();
   } else {
     exports.assert(actual, expected);
+  }
+};
+
+let _assertId = (actual, expected) => {
+  if (expected === '_mock_') {
+    should(actual.toString()).match(/^[a-z|\d]{24}$/);
+  } else {
+    should(actual.toString()).equal(expected.toString());
   }
 };
 
@@ -179,7 +121,7 @@ let _assertIfExpectedIsArray = (actual, expected) => {
 };
 
 let _assertIfExpectedIsSimplePrim = (actual, expected) => {
-  if (!exports.isSimplePrim(expected)) {
+  if (!_isSimplePrim(expected)) {
     return false;
   }
   should(actual).equal(expected);
