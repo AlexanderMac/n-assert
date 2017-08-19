@@ -49,7 +49,7 @@ nassert.assert(actual, expected);
 # Add to project
 $ npm i -S n-assert
 # Run tests
-$ npm test
+$ npm run tests
 # Run linter
 $ npm run lint
 # Run coverage tool
