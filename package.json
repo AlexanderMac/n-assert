@@ -6,7 +6,14 @@
   "files": [
     "index.js"
   ],
-  "scripts": {},
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint --ext .js index.js test/ || true",
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha",
+    "coverage": "./node_modules/.bin/nyc npm test"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlexanderMac/n-assert.git"
@@ -14,6 +21,7 @@
   "keywords": [
     "node",
     "assert",
+    "assertion",
     "test"
   ],
   "author": "Alexander Mac",
@@ -28,5 +36,10 @@
     "should": "^11.2.1",
     "sinon": "^1.17.7"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^4.3.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.4.2",
+    "nyc": "^11.1.0"
+  }
 }
