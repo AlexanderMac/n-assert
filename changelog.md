@@ -1,4 +1,10 @@
-# <sub>v1.1.0</sub>
+# <sub>v2.0.0-alpha</sub>
+#### _Aug. 20, 2017_
+
+ * Deleted deprecated methods: `getList`, `getSingleById`, `sinonMatch`, `buildQuery`, `processErrorNoMessage`.
+ * Some methods now are private: `assertId`, `isSimplePrim`.
+ 
+ # <sub>v1.1.0</sub>
 #### _Aug. 20, 2017_
 
  * All code covered by tests with code coverage ~99%.
