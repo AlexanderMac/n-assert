@@ -259,7 +259,7 @@ describe('n-assert', () => {
       };
       let expectedStatus = 201;
       let expectedBody = { userId: 2 };
-      let expectedErr = new Error('expected 1 to equal 2');
+      let expectedErr = new Error('expected 1 to equal 2 at path userId');
       test(res, expectedStatus, expectedBody, expectedErr);
     });
 
