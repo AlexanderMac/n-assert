@@ -1,4 +1,9 @@
-# <sub>v2.0.0-alpha</sub>
+# <sub>v2.0.0-alpha1</sub>
+#### _Aug. 20, 2017_
+
+ * Fixed a few bugs in assertions.
+ 
+ # <sub>v2.0.0-alpha</sub>
 #### _Aug. 20, 2017_
 
  * Deleted deprecated methods: `getList`, `getSingleById`, `sinonMatch`, `buildQuery`, `processErrorNoMessage`.
@@ -12,13 +17,13 @@
  # <sub>v1.0.0</sub>
 #### _Aug. 19, 2017_
 
- * Release a stable version.
+ * Released a stable version.
  * A few major changes in used dev-tools (eslint instead of jshint, added mocha for test and istanbul for code coverage).
  
  # <sub>v0.1.0</sub>
 #### _Jun. 8, 2017_
 
- * Revert sinon from v2 to v1.
+ * `sinon` reverted from v2 to v1.
 
 # <sub>v0.0.1</sub>
 #### _Jun. 8, 2017_
