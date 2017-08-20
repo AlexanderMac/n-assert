@@ -39,7 +39,7 @@ exports.assert = (actual, expected) => {
 exports.assertResponse = (res, expectedStatus, expectedBody) => {
   if (expectedStatus === 204) {
     should(res.headers['content-type']).be.undefined();
-    should(res.body).be.undefined();
+    should(res.body).be.empty();
   } else {
     should(res.headers['content-type']).match(/application\/json/);
     exports.assert(res.body, expectedBody);
@@ -124,6 +124,6 @@ let _assertIfExpectedIsSimplePrim = (actual, expected) => {
   if (!_isSimplePrim(expected)) {
     return false;
   }
-  should(actual).equal(expected);
+  should(actual).eql(expected);
   return true;
 };

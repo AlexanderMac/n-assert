@@ -54,7 +54,7 @@ describe('n-assert', () => {
       it('should fail assertion when actual is not equal to expected', () => {
         let actual = [1, 2, 3];
         let expected = [1, 'a', 3];
-        let expectedErr = new Error('expected 2 to be \'a\'');
+        let expectedErr = new Error('expected 2 to equal \'a\'');
         test(actual, expected, expectedErr);
       });
 
@@ -69,14 +69,14 @@ describe('n-assert', () => {
       it('should fail assertion when actual is not simple primitive', () => {
         let actual = { name: 'John' };
         let expected = 5;
-        let expectedErr = new Error('expected Object { name: \'John\' } to be 5');
+        let expectedErr = new Error('expected Object { name: \'John\' } to equal 5');
         test(actual, expected, expectedErr);
       });
 
       it('should fail assertion when actual is not equal to expected', () => {
         let actual = 1;
         let expected = 5;
-        let expectedErr = new Error('expected 1 to be 5');
+        let expectedErr = new Error('expected 1 to equal 5');
         test(actual, expected, expectedErr);
       });
 
@@ -227,13 +227,14 @@ describe('n-assert', () => {
       };
       let expectedStatus = 204;
       let expectedBody = undefined;
-      let expectedErr = new Error('expected Object { userId: 1 } to be undefined');
+      let expectedErr = new Error('expected Object { userId: 1 } to be empty');
       test(res, expectedStatus, expectedBody, expectedErr);
     });
 
-    it('should pass assertion when expectedStatus is 204 and res.headers.content-type and res.body are not defined', () => {
+    it('should pass assertion when expectedStatus is 204 and res.headers.content-type and res.body are empty', () => {
       let res = {
-        headers: {}
+        headers: {},
+        body: {}
       };
       let expectedStatus = 204;
       let expectedBody = undefined;
@@ -258,7 +259,7 @@ describe('n-assert', () => {
       };
       let expectedStatus = 201;
       let expectedBody = { userId: 2 };
-      let expectedErr = new Error('expected 1 to be 2');
+      let expectedErr = new Error('expected 1 to equal 2');
       test(res, expectedStatus, expectedBody, expectedErr);
     });
 
