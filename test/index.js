@@ -337,4 +337,34 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       test(err, expectResolveIsCalled);
     });
   });
+
+  describe('sinonMatch', () => {
+    let test = (actualVal, expectedVal, expectedRes) => {
+      let match = nassert.sinonMatch(expectedVal);
+      try {
+        let actualRes = match.test(actualVal);
+        should(actualRes).eql(expectedRes);
+      } catch (err) {
+        if (expectedRes instanceof Error) {
+          should(err.message).eql(expectedRes.message);
+        } else {
+          throw err;
+        }
+      }
+    };
+
+    it('should call sinon.match and throw error when assertion is failed', () => {
+      let actualVal = 5;
+      let expectedVal = 10;
+      let expectedRes = new Error('sinon.match AssertionError: expected 5 to equal 10');
+      test(actualVal, expectedVal, expectedRes);
+    });
+
+    it('should call sinon.match and return true when assertion is passed', () => {
+      let actualVal = 10;
+      let expectedVal = 10;
+      let expectedRes = true;
+      test(actualVal, expectedVal, expectedRes);
+    });
+  });
 });

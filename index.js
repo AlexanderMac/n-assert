@@ -3,8 +3,11 @@
 let _        = require('lodash');
 let mongoose = require('mongoose');
 let should   = require('should');
+let sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
+
+exports.getObjectIdStr = () => exports.getObjectId().toString();
 
 exports.assert = (actual, expected) => {
   let self = this;
@@ -65,6 +68,18 @@ exports.resolveOrReject = (err, resolve, reject) => {
   } else {
     resolve();
   }
+};
+
+exports.sinonMatch = (expected) => {
+  return sinon.match(actual => {
+    try {
+      exports.assert(actual, expected);
+      return true;
+    } catch (err) {
+      let newErr = new Error('sinon.match AssertionError: ' + err.message);
+      throw newErr;
+    }
+  });
 };
 
 let _isSimplePrim = (prim) => {
