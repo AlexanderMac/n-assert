@@ -1,4 +1,10 @@
-# <sub>v2.0.0-alpha1</sub>
+# <sub>v2.0.0-alpha2</sub>
+#### _Aug. 20, 2017_
+
+ * Improved `assert` method algorithm, decreased the number of recursive calls.
+ * AssertionError now contains `at path` part (contains the wrong value full path).
+ 
+ # <sub>v2.0.0-alpha1</sub>
 #### _Aug. 20, 2017_
 
  * Fixed a few bugs in assertions.
