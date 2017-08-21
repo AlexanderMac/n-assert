@@ -47,14 +47,14 @@ describe('n-assert', () => {
       it('should fail assertion when actual is not an array', () => {
         let actual = 1;
         let expected = [1, 2, 3];
-        let expectedErr = new Error('expected 1 to have own property length');
+        let expectedErr = new Error('expected 1 to equal Array [ 1, 2, 3 ]');
         test(actual, expected, expectedErr);
       });
 
       it('should fail assertion when actual is not equal to expected', () => {
         let actual = [1, 2, 3];
         let expected = [1, 'a', 3];
-        let expectedErr = new Error('expected 2 to equal \'a\'');
+        let expectedErr = new Error('expected Array [ 1, 2, 3 ] to equal Array [ 1, \'a\', 3 ] (at \'1\', A has 2 and B has \'a\')');
         test(actual, expected, expectedErr);
       });
 

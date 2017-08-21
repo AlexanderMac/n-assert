@@ -12,7 +12,7 @@ exports.getObjectIdStr = () => exports.getObjectId().toString();
 exports.assert = (actual, expected) => {
   if (_assertIfExpectedIsNil(actual, expected) ||
       _assertIfExpectedIsSimplePrim(actual, expected) ||
-      _assertIfExpectedIsArray(actual, expected)
+      _assertIfExpectedIsArrayOfSimplePrim(actual, expected)
   ) {
     return;
   }
@@ -123,16 +123,11 @@ let _assertIfExpectedIsNil = (actual, expected) => {
   return true;
 };
 
-let _assertIfExpectedIsArray = (actual, expected) => {
-  if (!_.isArray(expected)) {
+let _assertIfExpectedIsArrayOfSimplePrim = (actual, expected) => {
+  if (!_.isArray(expected) || !_.every(expected, _isSimplePrim)) {
     return false;
   }
-  should(actual).have.ownProperty('length');
-  should(actual.length).be.greaterThanOrEqual(expected.length);
-  for (let i = 0; i < expected.length; i++) {
-    exports.assert(actual[i], expected[i]);
-  }
-  return true;
+  should(actual).eql(expected);
 };
 
 let _assertIfExpectedIsSimplePrim = (actual, expected) => {
