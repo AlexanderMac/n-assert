@@ -1,3 +1,10 @@
+
+
+# <sub>v2.0.0-alpha4</sub>
+#### _Aug. 21, 2017_
+
+ * The used packages updated to the latest versions.
+
 # <sub>v2.0.0-alpha3</sub>
 #### _Aug. 21, 2017_
 
