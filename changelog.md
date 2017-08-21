@@ -1,4 +1,10 @@
-# <sub>v2.0.0-alpha2</sub>
+# <sub>v2.0.0-alpha3</sub>
+#### _Aug. 21, 2017_
+
+ * Added `assertCollection` method.
+ * Fixed bug in `assert` method for the case when an array of objects is asserting.
+ 
+ # <sub>v2.0.0-alpha2</sub>
 #### _Aug. 20, 2017_
 
  * Improved `assert` method algorithm, decreased the number of recursive calls.
