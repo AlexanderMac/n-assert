@@ -306,7 +306,7 @@ describe('n-assert', () => {
       User = mongoose.model('user');
 
       const MONGODB_URL = 'mongodb://localhost/nassert';
-      return mongoose.connection.open(MONGODB_URL);
+      return mongoose.connection.openUri(MONGODB_URL);
     });
 
     beforeEach(() => User.create(initialUsers));

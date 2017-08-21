@@ -59,11 +59,11 @@ exports.assertCollectionn = ({ model, initialDocs, changedDoc, typeOfChange, sor
           expectedDocs.push(changedDoc);
           break;
         case 'updated':
-          let t = _.find(expectedDocs, doc => doc._id.toString() === changedDoc._id.toString());
+          let t = _.find(expectedDocs, doc => _safeToString(doc._id) === _safeToString(changedDoc._id));
           _.extend(t, changedDoc);
           break;
         case 'deleted':
-          _.remove(expectedDocs, doc => doc._id.toString() === changedDoc._id.toString());
+          _.remove(expectedDocs, doc => _safeToString(doc._id) === _safeToString(changedDoc._id));
           break;
       }
 
@@ -139,9 +139,9 @@ let _assert = (field, actual, expected) => {
 
 let _assertObjectId = (actual, expected) => {
   if (expected === '_mock_') {
-    should(actual.toString()).match(/^[a-z|\d]{24}$/);
+    should(_safeToString(actual)).match(/^[a-z|\d]{24}$/);
   } else {
-    should(actual.toString()).equal(expected.toString());
+    should(_safeToString(actual)).equal(_safeToString(expected));
   }
 };
 
@@ -168,11 +168,13 @@ let _assertIfExpectedIsSimplePrim = (actual, expected) => {
   return true;
 };
 
+let _safeToString = val => _.isNil(val) ? val : val.toString();
+
 let _getObjectPaths = (item, curPath = '', isArray = false) => {
   let paths = [];
   _.each(item, (val, key) => {
     if (val instanceof mongoose.Types.ObjectId) {
-      val = val.toString();
+      val = _safeToString(val);
     }
     let newPath = isArray ? `${curPath}[${key}]` : `${curPath}.${key}`;
     if (_isSimplePrim(val)) {
