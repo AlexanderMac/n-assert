@@ -82,6 +82,15 @@ Asserts if status and body in `res` is equal to `expectedStatus` and `expectedBo
   - `expectedStatus` - expected http response status.
   - `expectedBody` - expected http response body.
 
+- **assertCollection({ model, initialDocs, changedDoc, typeOfChange, sortField })**<br>
+Asserts mongodb collection. Loads all collection documents, updates an initial collection with changed document and asserts.
+
+  - `model` - mongoose model.
+  - `initialDocs` - initial documents collection.
+  - `changedDoc` - changed document, must be omitted or undefined if collection is unchanged.
+  - `typeOfChange` - the type of the change (_created_, _updated_, _deleted_), must be omitted if collection is unchanged.
+  - `sortField` - the field which should be used for sorting actual and expected collections before asseting.
+
 - **processError(actual, expected, done)**<br>
 Asserts if `actual` is error object and is equal to `expected`.
 

@@ -47,6 +47,36 @@ exports.assertResponse = (res, expectedStatus, expectedBody) => {
   }
 };
 
+exports.assertCollectionn = ({ model, initialDocs, changedDoc, typeOfChange, sortField }) => {
+  let expectedDocs = _.cloneDeep(initialDocs);
+  return model
+    .find()
+    .lean()
+    .exec()
+    .then(actualDocs => {
+      switch (typeOfChange) {
+        case 'created':
+          expectedDocs.push(changedDoc);
+          break;
+        case 'updated':
+          let t = _.find(expectedDocs, doc => doc._id.toString() === changedDoc._id.toString());
+          _.extend(t, changedDoc);
+          break;
+        case 'deleted':
+          _.remove(expectedDocs, doc => doc._id.toString() === changedDoc._id.toString());
+          break;
+      }
+
+      if (sortField) {
+        actualDocs = _.sortBy(actualDocs, sortField);
+        expectedDocs = _.sortBy(expectedDocs, sortField);
+      }
+
+      exports.assert(actualDocs, expectedDocs);
+      return null;
+    });
+};
+
 exports.processError = (actual, expected, done) => {
   if (expected instanceof Error) {
     try {

@@ -1,9 +1,10 @@
 'use strict';
 
-let _       = require('lodash');
-let should  = require('should');
-let sinon   = require('sinon');
-let nassert = require('../index');
+let _        = require('lodash');
+let mongoose = require('mongoose');
+let should   = require('should');
+let sinon    = require('sinon');
+let nassert  = require('../index');
 
 describe('n-assert', () => {
   describe('assert', () => {
@@ -271,6 +272,77 @@ describe('n-assert', () => {
       let expectedStatus = 201;
       let expectedBody = { userId: 1 };
       test(res, expectedStatus, expectedBody);
+    });
+  });
+
+  describe('assertCollection', () => {
+    mongoose.Promise = global.Promise;
+    let User;
+
+    let initialUsers = [
+      { _id: nassert.getObjectId(), name: 'John', email: 'john@mail.com' },
+      { _id: nassert.getObjectId(), name: 'Ted', email: 'ted@mail.com' },
+      { _id: nassert.getObjectId(), name: 'Matt', email: 'matt@mail.com' }
+    ];
+
+    let test = (changedUser, typeOfChange) => {
+      return nassert.assertCollectionn({
+        model: User,
+        initialDocs: initialUsers,
+        changedDoc: changedUser,
+        typeOfChange,
+        sortField: 'name'
+      });
+    };
+
+    before(() => {
+      let Schema = mongoose.Schema;
+      let UserSchema = new Schema({
+        name: String,
+        email: String
+      });
+
+      mongoose.model('user', UserSchema);
+      User = mongoose.model('user');
+
+      const MONGODB_URL = 'mongodb://localhost/nassert';
+      return mongoose.connection.open(MONGODB_URL);
+    });
+
+    beforeEach(() => User.create(initialUsers));
+
+    afterEach(() => User.remove());
+
+    after(() => mongoose.connection.close());
+
+    it('should pass assertion when no one document is changed', () => {
+      test();
+    });
+
+    it('should pass assertion when a new document is added', () => {
+      let changedUser = { name: 'Max', email: 'max@mail.com' };
+      return User
+        .create(changedUser)
+        .then(() => test(changedUser, 'created'));
+    });
+
+    it('should pass assertion when an existing document is updated', () => {
+      let changedUser = { _id: initialUsers[1]._id, name: 'Roy', email: 'roy@mail.com' };
+      return User
+        .findById(changedUser._id)
+        .then(user => {
+          _.extend(user, changedUser);
+          return user.save();
+        })
+        .then(() => test(changedUser, 'updated'));
+    });
+
+    it('should pass assertion when an existing document is deleted', () => {
+      let changedUser = { _id: initialUsers[2]._id.toString() };
+      return User
+        .findById(changedUser._id)
+        .then(user => user.remove())
+        .then(() => test(changedUser, 'deleted'));
     });
   });
 
