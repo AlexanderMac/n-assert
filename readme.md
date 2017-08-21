@@ -70,31 +70,40 @@ should('should find user by name', => {
 
 ### API
 - **assert(actual, expected)**<br>
-Assert if `actual` is equal to `expected`.
+Asserts if `actual` is equal to `expected`.
 
   - `actual` - actual object, can be null|undefined.
   - `expected` - expected object, can be null|undefined.
 
 - **assertResponse(res, expectedStatus, expectedBody)**<br>
-Assert if status and body in `res` is equal to `expectedStatus` and `expectedBody`.
+Asserts if status and body in `res` is equal to `expectedStatus` and `expectedBody`.
 
   - `res` - http response.
   - `expectedStatus` - expected http response status.
   - `expectedBody` - expected http response body.
 
-- **processError = (actual, expected, done)**<br>
-Assert if `actual` is error object and is equal to `expected`.
+- **processError(actual, expected, done)**<br>
+Asserts if `actual` is error object and is equal to `expected`.
 
   - `actual` - actual error object.
   - `expected` - expected error object.
   - `done` - mocha callback, is called with error when `actual` is not equal to `expected`, otherwise without parameters.
 
-- **resolveOrReject = (err, resolve, reject)**<br>
-Call `reject` if `err` is not null or undefined, otherwise `resolve`.
+- **resolveOrReject(err, resolve, reject)**<br>
+Calls `reject` if `err` is not null or undefined, otherwise `resolve`.
 
   - `err` - error object, can be null|undefined.
   - `resolve` - callback, is called when `err` is not null or undefined.
   - `reject` - callback, is called when `err` is undefined.
+
+- **sinonMatch(expected)**<br>
+Calls sinon.match and compares `actual` value with `expected` using `nassert.assert`. Returns true if they are the same, otherwiser throws an error.
+
+- **getObjectId()**<br>
+Returns new mongodb ObjectId.
+
+- **getObjectIdStr()**<br>
+Returns new mongodb ObjectId converted to string.
 
 ### Author
 Alexander Mac
