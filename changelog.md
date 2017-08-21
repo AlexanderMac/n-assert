@@ -1,4 +1,7 @@
+# <sub>v2.0.0-alpha5</sub>
+#### _Aug. 21, 2017_
 
+ * Added `safeToString` method to safety convert value to string.
 
 # <sub>v2.0.0-alpha4</sub>
 #### _Aug. 21, 2017_
