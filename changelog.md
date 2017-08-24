@@ -1,3 +1,9 @@
+# <sub>v2.0.0-alpha6</sub>
+#### _Aug. 24, 2017_
+
+ * Added parameters validations in `assertCollection` method.
+ * Removed `getObjectIdStr` method.
+
 # <sub>v2.0.0-alpha5</sub>
 #### _Aug. 21, 2017_
 
