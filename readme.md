@@ -111,9 +111,6 @@ Calls sinon.match and compares `actual` value with `expected` using `nassert.ass
 - **getObjectId()**<br>
 Returns new mongodb ObjectId.
 
-- **getObjectIdStr()**<br>
-Returns new mongodb ObjectId converted to string.
-
 ### Author
 Alexander Mac
 

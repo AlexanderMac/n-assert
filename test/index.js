@@ -285,10 +285,10 @@ describe('n-assert', () => {
       { _id: nassert.getObjectId(), name: 'Matt', email: 'matt@mail.com' }
     ];
 
-    let test = (changedUser, typeOfChange) => {
-      return nassert.assertCollectionn({
-        model: User,
-        initialDocs: initialUsers,
+    let test = (model, initialDocs, changedUser, typeOfChange) => {
+      return nassert.assertCollection({
+        model,
+        initialDocs,
         changedDoc: changedUser,
         typeOfChange,
         sortField: 'name'
@@ -315,15 +315,60 @@ describe('n-assert', () => {
 
     after(() => mongoose.connection.close());
 
+    it('should throw an error when model is undefined', () => {
+      let changedUser = { name: 'Max', email: 'max@mail.com' };
+      let expectedError = new Error('<model> is undefined');
+      return User
+        .create(changedUser)
+        .then(() => test(undefined, initialUsers, changedUser, 'created'))
+        .catch(err => should(err).eql(expectedError));
+    });
+
+    it('should throw an error when model is not mongoose model', () => {
+      let changedUser = { name: 'Max', email: 'max@mail.com' };
+      let expectedError = new Error('<model> is not mongoose model');
+      return User
+        .create(changedUser)
+        .then(() => test({}, initialUsers, changedUser, 'created'))
+        .catch(err => should(err).eql(expectedError));
+    });
+
+    it('should throw an error when intialCollection is not an array', () => {
+      let changedUser = { name: 'Max', email: 'max@mail.com' };
+      let expectedError = new Error('<initialDocs> is undefined or not an array of documents');
+      return User
+        .create(changedUser)
+        .then(() => test(User, initialUsers[0], changedUser, 'created'))
+        .catch(err => should(err).eql(expectedError));
+    });
+
+    it('should throw an error when typeOfChange has invalid value', () => {
+      let changedUser = { name: 'Max', email: 'max@mail.com' };
+      let expectedError = new Error('Unknown <typeOfChange>');
+      return User
+        .create(changedUser)
+        .then(() => test(User, initialUsers, changedUser, 'wrong type'))
+        .catch(err => should(err).eql(expectedError));
+    });
+
+    it('should throw an error when typeOfChange is defined, but changedDoc not', () => {
+      let changedUser = { name: 'Max', email: 'max@mail.com' };
+      let expectedError = new Error('<changedDoc> must be defined, when <typeOfChange> is defined');
+      return User
+        .create(changedUser)
+        .then(() => test(User, initialUsers, undefined, 'created'))
+        .catch(err => should(err).eql(expectedError));
+    });
+
     it('should pass assertion when no one document is changed', () => {
-      test();
+      return test(User, initialUsers);
     });
 
     it('should pass assertion when a new document is added', () => {
       let changedUser = { name: 'Max', email: 'max@mail.com' };
       return User
         .create(changedUser)
-        .then(() => test(changedUser, 'created'));
+        .then(() => test(User, initialUsers, changedUser, 'created'));
     });
 
     it('should pass assertion when an existing document is updated', () => {
@@ -334,7 +379,7 @@ describe('n-assert', () => {
           _.extend(user, changedUser);
           return user.save();
         })
-        .then(() => test(changedUser, 'updated'));
+        .then(() => test(User, initialUsers, changedUser, 'updated'));
     });
 
     it('should pass assertion when an existing document is deleted', () => {
@@ -342,7 +387,7 @@ describe('n-assert', () => {
       return User
         .findById(changedUser._id)
         .then(user => user.remove())
-        .then(() => test(changedUser, 'deleted'));
+        .then(() => test(User, initialUsers, changedUser, 'deleted'));
     });
   });
 

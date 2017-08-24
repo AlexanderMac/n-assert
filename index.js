@@ -7,8 +7,6 @@ let sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
 
-exports.getObjectIdStr = () => exports.getObjectId().toString();
-
 exports.assert = (actual, expected) => {
   if (_assertIfExpectedIsNil(actual, expected) ||
       _assertIfExpectedIsSimplePrim(actual, expected) ||
@@ -47,7 +45,25 @@ exports.assertResponse = (res, expectedStatus, expectedBody) => {
   }
 };
 
-exports.assertCollectionn = ({ model, initialDocs, changedDoc, typeOfChange, sortField }) => {
+exports.assertCollection = ({ model, initialDocs, changedDoc, typeOfChange, sortField }) => {
+  if (!model) {
+    throw new Error('<model> is undefined');
+  }
+  if (!_.isFunction(model.find)) {
+    throw new Error('<model> is not mongoose model');
+  }
+  if (!_.isArray(initialDocs)) {
+    throw new Error('<initialDocs> is undefined or not an array of documents');
+  }
+  if (typeOfChange) {
+    if (!_.includes(['created', 'updated', 'deleted'], typeOfChange)) {
+      throw new Error('Unknown <typeOfChange>');
+    }
+    if (!changedDoc) {
+      throw new Error('<changedDoc> must be defined, when <typeOfChange> is defined');
+    }
+  }
+
   let expectedDocs = _.cloneDeep(initialDocs);
   return model
     .find()
