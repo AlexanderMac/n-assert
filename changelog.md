@@ -1,42 +1,18 @@
-# <sub>v2.0.0-alpha6</sub>
-#### _Aug. 24, 2017_
-
- * Added parameters validations in `assertCollection` method.
- * Removed `getObjectIdStr` method.
-
-# <sub>v2.0.0-alpha5</sub>
-#### _Aug. 21, 2017_
-
- * Added `safeToString` method to safety convert value to string.
-
-# <sub>v2.0.0-alpha4</sub>
-#### _Aug. 21, 2017_
-
- * The used packages updated to the latest versions.
-
-# <sub>v2.0.0-alpha3</sub>
-#### _Aug. 21, 2017_
-
- * Added `assertCollection` method.
- * Fixed bug in `assert` method for the case when an array of objects is asserting.
- 
- # <sub>v2.0.0-alpha2</sub>
-#### _Aug. 20, 2017_
-
- * Improved `assert` method algorithm, decreased the number of recursive calls.
- * AssertionError now contains `at path` part (contains the wrong value full path).
- 
- # <sub>v2.0.0-alpha1</sub>
-#### _Aug. 20, 2017_
-
- * Fixed a few bugs in assertions.
- 
- # <sub>v2.0.0-alpha</sub>
-#### _Aug. 20, 2017_
+# <sub>v2.0.0</sub>
+#### _Sep. 1, 2017_
 
  * Deleted deprecated methods: `getList`, `getSingleById`, `sinonMatch`, `buildQuery`, `processErrorNoMessage`.
  * Some methods now are private: `assertId`, `isSimplePrim`.
- 
+ * Removed `getObjectIdStr` method.
+ * Added `assertCollection` method. 
+ * Added `safeToString` method to safety convert value to string.
+ * Added parameter validations in `assertCollection` method.
+ * Improved `assert` method algorithm, decreased the number of recursive calls.
+ * AssertionError now contains `at path` part (contains the wrong value full path).
+ * Fixed bug in `assert` method for the case when an array of objects is asserting.
+ * Fixed a few bugs in assertions.
+ * The used packages updated to the latest versions.
+
  # <sub>v1.1.0</sub>
 #### _Aug. 20, 2017_
 
