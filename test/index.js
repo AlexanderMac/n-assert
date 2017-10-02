@@ -6,11 +6,22 @@ let should   = require('should');
 let sinon    = require('sinon');
 let nassert  = require('../index');
 
+mongoose.Promise = global.Promise;
+
+let Schema = mongoose.Schema;
+let UserSchema = new Schema({
+  name: String,
+  email: String
+});
+
+mongoose.model('user', UserSchema);
+let User = mongoose.model('user');
+
 describe('n-assert', () => {
   describe('assert', () => {
-    let test = (actual, expected, expectedErr) => {
+    let test = (actual, expected, isEqual, expectedErr) => {
       try {
-        nassert.assert(actual, expected);
+        nassert.assert(actual, expected, isEqual);
         if (expectedErr) {
           throw new Error('Test must fail, because an error is expected');
         }
@@ -23,12 +34,64 @@ describe('n-assert', () => {
       }
     };
 
+    describe('actual is Mongoose document', () => {
+      it('should convert a single actual Mongoose document to a plain object', () => {
+        let actual = new User({
+          name: 'John',
+          email: 'john@mail.com'
+        });
+        let expected = {
+          name: 'John',
+          email: 'john@mail.com'
+        };
+        test(actual, expected);
+      });
+
+      it('should convert an array of actual Mongoose document to plain objects', () => {
+        let actual = [
+          new User({ name: 'John', email: 'john@mail.com' }),
+          new User({ name: 'Donald', email: 'donald@mail.com' })
+        ];
+        let expected = [
+          { name: 'John', email: 'john@mail.com' }
+        ];
+        test(actual, expected);
+      });
+    });
+
+    describe('isEqual is passed', () => {
+      it('should fail when isEqual is passed and expected not equal to actual', () => {
+        let actual = [
+          { name: 'John', email: 'john@mail.com' },
+          { name: 'Donald', email: 'donald@mail.com' }
+        ];
+        let expected = [
+          { name: 'John', email: 'john@mail.com' }
+        ];
+        /* eslint quotes: off */
+        let expectedErr = new Error(`expected Array [ '0.email', '0.name', '1.email', '1.name' ] to equal Array [ '0.email', '0.name' ] (at length, A has 4 and B has 2)`);
+        test(actual, expected, true, expectedErr);
+      });
+
+      it('should pass when isEqual is passed and expected equals to actual', () => {
+        let actual = [
+          { name: 'John', email: 'john@mail.com' },
+          { name: 'Donald', email: 'donald@mail.com' }
+        ];
+        let expected = [
+          { name: 'John', email: 'john@mail.com' },
+          { name: 'Donald', email: 'donald@mail.com' }
+        ];
+        test(actual, expected, true);
+      });
+    });
+
     describe('expected is nil', () => {
       it('should fail assertion when actual is not undefined', () => {
         let actual = 1;
         let expected = undefined;
         let expectedErr = new Error('expected 1 not to be truthy (false negative fail)');
-        test(actual, expected, expectedErr);
+        test(actual, expected, undefined, expectedErr);
       });
 
       it('should pass assertion when actual is undefined and expected is null', () => {
@@ -49,14 +112,14 @@ describe('n-assert', () => {
         let actual = 1;
         let expected = [1, 2, 3];
         let expectedErr = new Error('expected 1 to equal Array [ 1, 2, 3 ]');
-        test(actual, expected, expectedErr);
+        test(actual, expected, undefined, expectedErr);
       });
 
       it('should fail assertion when actual is not equal to expected', () => {
         let actual = [1, 2, 3];
         let expected = [1, 'a', 3];
         let expectedErr = new Error('expected Array [ 1, 2, 3 ] to equal Array [ 1, \'a\', 3 ] (at \'1\', A has 2 and B has \'a\')');
-        test(actual, expected, expectedErr);
+        test(actual, expected, undefined, expectedErr);
       });
 
       it('should pass assertion when actual is equal to expected', () => {
@@ -71,14 +134,14 @@ describe('n-assert', () => {
         let actual = { name: 'John' };
         let expected = 5;
         let expectedErr = new Error('expected Object { name: \'John\' } to equal 5');
-        test(actual, expected, expectedErr);
+        test(actual, expected, undefined, expectedErr);
       });
 
       it('should fail assertion when actual is not equal to expected', () => {
         let actual = 1;
         let expected = 5;
         let expectedErr = new Error('expected 1 to equal 5');
-        test(actual, expected, expectedErr);
+        test(actual, expected, undefined, expectedErr);
       });
 
       it('should pass assertion when actual is equal to expected', () => {
@@ -276,9 +339,6 @@ describe('n-assert', () => {
   });
 
   describe('assertCollection', () => {
-    mongoose.Promise = global.Promise;
-    let User;
-
     let initialUsers = [
       { _id: nassert.getObjectId(), name: 'John', email: 'john@mail.com' },
       { _id: nassert.getObjectId(), name: 'Ted', email: 'ted@mail.com' },
@@ -296,15 +356,6 @@ describe('n-assert', () => {
     };
 
     before(() => {
-      let Schema = mongoose.Schema;
-      let UserSchema = new Schema({
-        name: String,
-        email: String
-      });
-
-      mongoose.model('user', UserSchema);
-      User = mongoose.model('user');
-
       const MONGODB_URL = 'mongodb://localhost/nassert';
       return mongoose.connection.openUri(MONGODB_URL);
     });

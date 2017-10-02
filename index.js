@@ -7,7 +7,9 @@ let sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
 
-exports.assert = (actual, expected) => {
+// TODO: retest isEqual
+/* eslint max-statements: off */
+exports.assert = (actual, expected, isEqual) => {
   if (_assertIfExpectedIsNil(actual, expected) ||
       _assertIfExpectedIsSimplePrim(actual, expected) ||
       _assertIfExpectedIsArrayOfSimplePrim(actual, expected)
@@ -15,15 +17,20 @@ exports.assert = (actual, expected) => {
     return;
   }
 
-  if (actual instanceof mongoose.Document) {
-    actual = actual.toObject();
+  actual = _convertMongooseDocsToPlainObjects(actual);
+
+  let expectedPaths = _getObjectPaths(expected);
+  if (isEqual) {
+    let actualPaths = _getObjectPaths(actual);
+    actualPaths = _.sortBy(actualPaths);
+    expectedPaths = _.sortBy(expectedPaths);
+    should(actualPaths).eql(expectedPaths);
   }
 
-  let paths = _getObjectPaths(expected);
   let path;
   try {
-    for (let i = 0; i < paths.length; i++) {
-      path = paths[i];
+    for (let i = 0; i < expectedPaths.length; i++) {
+      path = expectedPaths[i];
       let field = _getActualField(path);
       let actualVal = _.get(actual, path);
       let expectedVal = _.get(expected, path);
@@ -133,6 +140,23 @@ let _isSimplePrim = (prim) => {
          _.isDate(prim) ||
          _.isSymbol(prim) ||
          _.isRegExp(prim);
+};
+
+let _convertMongooseDocsToPlainObjects = (actual) => {
+  if (actual instanceof mongoose.Document) {
+    return actual.toObject();
+  }
+
+  if (_.isArray(actual)) {
+    return _.map(actual, item => {
+      if (item instanceof mongoose.Document) {
+        return item.toObject();
+      }
+      return item;
+    });
+  }
+
+  return actual;
 };
 
 let _assert = (field, actual, expected) => {

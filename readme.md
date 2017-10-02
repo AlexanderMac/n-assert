@@ -69,11 +69,12 @@ should('should find user by name', => {
 ```
 
 ### API
-- **assert(actual, expected)**<br>
+- **assert(actual, expected, isEqual)**<br>
 Asserts if `actual` is equal to `expected`.
 
   - `actual` - actual object, can be null|undefined.
   - `expected` - expected object, can be null|undefined.
+  - `isEqual` - if passed, performs a deep assertion between two values to determine if they are equivalent. 
 
 - **assertResponse(res, expectedStatus, expectedBody)**<br>
 Asserts if status and body in `res` is equal to `expectedStatus` and `expectedBody`.
