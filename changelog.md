@@ -1,3 +1,10 @@
+# <sub>v2.1.0</sub>
+#### _Oct. 2, 2017_
+
+ * Added `isEqual` parameter to `assert` method to perform a deep assertion between two values to determine if they are equivalent.
+ - Added logic for converting `actual` mongoose documents array to plain objects.
+
+
 # <sub>v2.0.0</sub>
 #### _Sep. 1, 2017_
 
