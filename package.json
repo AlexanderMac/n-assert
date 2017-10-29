@@ -10,10 +10,9 @@
     "node": ">=4"
   },
   "scripts": {
-    "test": "npm run lint && npm run tests",
-    "lint": "./node_modules/.bin/eslint --ext .js index.js test/ || true",
-    "tests": "NODE_ENV=test ./node_modules/.bin/mocha || true",
-    "coverage": "./node_modules/.bin/nyc npm run tests"
+    "lint": "eslint --ext .js index.js test/",
+    "test": "NODE_ENV=test mocha",
+    "coverage": "nyc npm run test"
   },
   "repository": {
     "type": "git",
