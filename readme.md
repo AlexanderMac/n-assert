@@ -115,5 +115,5 @@ Returns new mongodb ObjectId.
 ### Author
 Alexander Mac
 
-### Licence
+### License
 Licensed under the MIT license.
