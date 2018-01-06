@@ -1,9 +1,9 @@
 'use strict';
 
-let _        = require('lodash');
-let mongoose = require('mongoose');
-let should   = require('should');
-let sinon    = require('sinon');
+const _        = require('lodash');
+const mongoose = require('mongoose');
+const should   = require('should');
+const sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
 
@@ -133,16 +133,16 @@ exports.sinonMatch = (expected) => {
   });
 };
 
-let _isSimplePrim = (prim) => {
+function _isSimplePrim(prim) {
   return _.isBoolean(prim) ||
          _.isNumber(prim) ||
          _.isString(prim) ||
          _.isDate(prim) ||
          _.isSymbol(prim) ||
          _.isRegExp(prim);
-};
+}
 
-let _convertMongooseDocsToPlainObjects = (actual) => {
+function _convertMongooseDocsToPlainObjects(actual) {
   if (actual instanceof mongoose.Document) {
     return actual.toObject();
   }
@@ -157,9 +157,9 @@ let _convertMongooseDocsToPlainObjects = (actual) => {
   }
 
   return actual;
-};
+}
 
-let _assert = (field, actual, expected) => {
+function _assert(field, actual, expected) {
   if (field === '_id' || expected instanceof mongoose.Types.ObjectId) {
     _assertObjectId(actual, expected);
   } else if (field === '__v') {
@@ -175,42 +175,44 @@ let _assert = (field, actual, expected) => {
   } else {
     exports.assert(actual, expected);
   }
-};
+}
 
-let _assertObjectId = (actual, expected) => {
+function _assertObjectId(actual, expected) {
   if (expected === '_mock_') {
     should(_safeToString(actual)).match(/^[a-z|\d]{24}$/);
   } else {
     should(_safeToString(actual)).equal(_safeToString(expected));
   }
-};
+}
 
-let _assertIfExpectedIsNil = (actual, expected) => {
+function _assertIfExpectedIsNil(actual, expected) {
   if (!_.isNil(expected)) {
     return false;
   }
   should(actual).not.be.ok();
   return true;
-};
+}
 
-let _assertIfExpectedIsArrayOfSimplePrim = (actual, expected) => {
+function _assertIfExpectedIsArrayOfSimplePrim(actual, expected) {
   if (!_.isArray(expected) || !_.every(expected, _isSimplePrim)) {
     return false;
   }
   should(actual).eql(expected);
-};
+}
 
-let _assertIfExpectedIsSimplePrim = (actual, expected) => {
+function _assertIfExpectedIsSimplePrim(actual, expected) {
   if (!_isSimplePrim(expected)) {
     return false;
   }
   should(actual).eql(expected);
   return true;
-};
+}
 
-let _safeToString = val => _.isNil(val) ? val : val.toString();
+function _safeToString(val) {
+  return _.isNil(val) ? val : val.toString();
+}
 
-let _getObjectPaths = (item, curPath = '', isArray = false) => {
+function _getObjectPaths(item, curPath = '', isArray = false) {
   let paths = [];
   _.each(item, (val, key) => {
     if (val instanceof mongoose.Types.ObjectId) {
@@ -230,9 +232,9 @@ let _getObjectPaths = (item, curPath = '', isArray = false) => {
     paths = _.map(paths, path => _.trimStart(path, '.'));
   }
   return paths;
-};
+}
 
-let _getActualField = (path) => {
+function _getActualField(path) {
   let fields = path.split('.');
   return _.last(fields);
-};
+}

@@ -1,25 +1,25 @@
 'use strict';
 
-let _        = require('lodash');
-let mongoose = require('mongoose');
-let should   = require('should');
-let sinon    = require('sinon');
-let nassert  = require('../index');
+const _        = require('lodash');
+const mongoose = require('mongoose');
+const should   = require('should');
+const sinon    = require('sinon');
+const nassert  = require('../index');
 
 mongoose.Promise = global.Promise;
 
-let Schema = mongoose.Schema;
-let UserSchema = new Schema({
+const Schema = mongoose.Schema;
+const UserSchema = new Schema({
   name: String,
   email: String
 });
 
 mongoose.model('user', UserSchema);
-let User = mongoose.model('user');
+const User = mongoose.model('user');
 
 describe('n-assert', () => {
   describe('assert', () => {
-    let test = (actual, expected, isEqual, expectedErr) => {
+    function test(actual, expected, isEqual, expectedErr) {
       try {
         nassert.assert(actual, expected, isEqual);
         if (expectedErr) {
@@ -32,7 +32,7 @@ describe('n-assert', () => {
           throw err;
         }
       }
-    };
+    }
 
     describe('actual is Mongoose document', () => {
       it('should convert a single actual Mongoose document to a plain object', () => {
@@ -258,7 +258,7 @@ describe('n-assert', () => {
   });
 
   describe('assertResponse', () => {
-    let test = (res, expectedStatus, expectedBody, expectedErr) => {
+    function test(res, expectedStatus, expectedBody, expectedErr) {
       try {
         nassert.assertResponse(res, expectedStatus, expectedBody);
         if (expectedErr) {
@@ -271,7 +271,7 @@ describe('n-assert', () => {
           throw err;
         }
       }
-    };
+    }
 
     it('should fail assertion when expectedStatus is 204 and res.headers.content-type is not undefined', () => {
       let res = {
@@ -345,7 +345,7 @@ describe('n-assert', () => {
       { _id: nassert.getObjectId(), name: 'Matt', email: 'matt@mail.com' }
     ];
 
-    let test = (model, initialDocs, changedUser, typeOfChange) => {
+    function test(model, initialDocs, changedUser, typeOfChange) {
       return nassert.assertCollection({
         model,
         initialDocs,
@@ -353,7 +353,7 @@ describe('n-assert', () => {
         typeOfChange,
         sortField: 'name'
       });
-    };
+    }
 
     before(() => {
       const MONGODB_URL = 'mongodb://localhost/nassert';
@@ -443,7 +443,7 @@ describe('n-assert', () => {
   });
 
   describe('processError', () => {
-    let test = (actual, expected, expectedCalledWith) => {
+    function test(actual, expected, expectedCalledWith) {
       let done = sinon.spy();
 
       nassert.processError(actual, expected, done);
@@ -455,7 +455,7 @@ describe('n-assert', () => {
           return actual.message === expectedCalledWith.message;
         })))).be.true();
       }
-    };
+    }
 
     it('should call done with an error when expected is not an error', () => {
       let actual = new Error('err1');
@@ -481,7 +481,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
   });
 
   describe('resolveOrReject', () => {
-    let test = (err, expectResolveIsCalled) => {
+    function test(err, expectResolveIsCalled) {
       let resolve = sinon.spy();
       let reject = sinon.spy();
 
@@ -491,7 +491,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       } else {
         should(reject.calledOnce).be.true();
       }
-    };
+    }
 
     it('should call resolve when err is undefined', () => {
       let err = undefined;
@@ -507,7 +507,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
   });
 
   describe('sinonMatch', () => {
-    let test = (actualVal, expectedVal, expectedRes) => {
+    function test(actualVal, expectedVal, expectedRes) {
       let match = nassert.sinonMatch(expectedVal);
       try {
         let actualRes = match.test(actualVal);
@@ -519,7 +519,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
           throw err;
         }
       }
-    };
+    }
 
     it('should call sinon.match and throw error when assertion is failed', () => {
       let actualVal = 5;
