@@ -1,8 +1,13 @@
+# <sub>v2.2.0</sub>
+#### _Ja. 6, 2018_
+
+ * Added `validateCalledFn` method to validate that stubbed function is called or not, and if called then with provided arguments.
+ 
 # <sub>v2.1.0</sub>
 #### _Oct. 2, 2017_
 
  * Added `isEqual` parameter to `assert` method to perform a deep assertion between two values to determine if they are equivalent.
- - Added logic for converting `actual` mongoose documents array to plain objects.
+ * Added logic for converting `actual` mongoose documents array to plain objects.
 
 
 # <sub>v2.0.0</sub>

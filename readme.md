@@ -112,6 +112,9 @@ Calls sinon.match and compares `actual` value with `expected` using `nassert.ass
 - **getObjectId()**<br>
 Returns new mongodb ObjectId.
 
+- **validateCalledFn**<br>
+Validates that stubbed function is called or not, and if called then with provided arguments.
+
 ### Author
 Alexander Mac
 

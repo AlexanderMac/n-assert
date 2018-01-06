@@ -133,6 +133,37 @@ exports.sinonMatch = (expected) => {
   });
 };
 
+exports.validateCalledFn = ({ srvc, fnName, expectedArgs, expectedMultipleArgs }) => {
+  if (!expectedArgs && !expectedMultipleArgs) {
+    should(srvc[fnName].called).equal(
+      false,
+      `Expected that ${fnName} won't be called`
+    );
+    return;
+  }
+
+  should(srvc[fnName].calledOnce).equal(
+    true,
+    `Expected that ${fnName} called once`
+  );
+  if (expectedArgs === '_without-args_') {
+    should(srvc[fnName].calledWithExactly()).equal(
+      true,
+      `Expected that ${fnName} called without args`
+    );
+  } else if (expectedMultipleArgs) {
+    should(srvc[fnName].calledWithExactly(...expectedMultipleArgs)).equal(
+      true,
+      `Expected that ${fnName} called with multiple args`
+    );
+  } else {
+    should(srvc[fnName].calledWithExactly(exports.sinonMatch(expectedArgs))).equal(
+      true,
+      `Expected that ${fnName} called with single arg`
+    );
+  }
+};
+
 function _isSimplePrim(prim) {
   return _.isBoolean(prim) ||
          _.isNumber(prim) ||

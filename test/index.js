@@ -535,4 +535,117 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       test(actualVal, expectedVal, expectedRes);
     });
   });
+
+  describe('validateCalledFn', () => {
+    let _srvc = {
+      doWork: () => {}
+    };
+
+    beforeEach(() => {
+      sinon.stub(_srvc, 'doWork');
+    });
+
+    afterEach(() => {
+      _srvc.doWork.restore();
+    });
+
+    function test({ params, expected }) {
+      if (_.isError(expected)) {
+        should(nassert.validateCalledFn.bind(nassert, params)).throw(expected.message);
+      } else {
+        nassert.validateCalledFn(params);
+      }
+    }
+
+    function getDefaultParams(ex) {
+      let params = {
+        srvc: _srvc,
+        fnName: 'doWork'
+      };
+      return _.extend(params, ex);
+    }
+
+    it('should throw error when service method called, but expectedArgs and expectedMultipleArgs are not provided', () => {
+      let params = getDefaultParams();
+      let expected = new Error('Expected that doWork won\'t be called');
+
+      _srvc.doWork();
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method doesn\'t called, but expectedArgs is provided', () => {
+      let params = getDefaultParams({ expectedArgs: 'p1' });
+      let expected = new Error('Expected that doWork called once');
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method called twice, but expectedArgs is provided', () => {
+      let params = getDefaultParams({ expectedArgs: 'p1' });
+      let expected = new Error('Expected that doWork called once');
+
+      _srvc.doWork('p1');
+      _srvc.doWork('p1');
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method called with one arg, but expectedArgs is `_without-args_`', () => {
+      let params = getDefaultParams({ expectedArgs: '_without-args_' });
+      let expected = new Error('Expected that doWork called without args');
+
+      _srvc.doWork('p1');
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method called with [p1, p3], but expectedMultipleArgs is [p1, p2]', () => {
+      let params = getDefaultParams({ expectedMultipleArgs: ['p1', 'p2'] });
+      let expected = new Error('Expected that doWork called with multiple args');
+
+      _srvc.doWork('p1', 'p3');
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method called with p1, but expectedArgs is p2', () => {
+      let params = getDefaultParams({ expectedArgs: 'p2' });
+      let expected = new Error(`sinon.match AssertionError: expected 'p1' to equal 'p2'`);
+
+      _srvc.doWork('p1');
+
+      test({ params, expected });
+    });
+
+    it('shouldn\'t throw error when service method doesn\'t called and expectedArgs, expectedMultipleArgs are not provided', () => {
+      let params = getDefaultParams();
+
+      test({ params, expected: null });
+    });
+
+    it('shouldn\'t throw error when service method called without args and expectedArgs is `_without-args_`', () => {
+      let params = getDefaultParams({ expectedArgs: '_without-args_' });
+
+      _srvc.doWork();
+
+      test({ params, expected: null });
+    });
+
+    it('shouldn\'t throw error when service method called with [p1, p2] and expectedMultipleArgs is [p1, p2]', () => {
+      let params = getDefaultParams({ expectedMultipleArgs: ['p1', 'p2'] });
+
+      _srvc.doWork('p1', 'p2');
+
+      test({ params, expected: null });
+    });
+
+    it('shouldn\'t throw error when service method called with p1 and expectedArgs is p1', () => {
+      let params = getDefaultParams({ expectedArgs: 'p1' });
+
+      _srvc.doWork('p1');
+
+      test({ params, expected: null });
+    });
+  });
 });
