@@ -1,3 +1,10 @@
+# <sub>v3.0.0</sub>
+#### _Ja. 27, 2018_
+
+ * Sinon updated to v4.x.
+ * Mocha updated to v5.x, mongoose to v5.x, should to v13.x.
+ * Removed unnecessary Istanbul dependecy.
+
 # <sub>v2.2.0</sub>
 #### _Ja. 6, 2018_
 
@@ -8,7 +15,6 @@
 
  * Added `isEqual` parameter to `assert` method to perform a deep assertion between two values to determine if they are equivalent.
  * Added logic for converting `actual` mongoose documents array to plain objects.
-
 
 # <sub>v2.0.0</sub>
 #### _Sep. 1, 2017_
@@ -25,18 +31,18 @@
  * Fixed a few bugs in assertions.
  * The used packages updated to the latest versions.
 
- # <sub>v1.1.0</sub>
+# <sub>v1.1.0</sub>
 #### _Aug. 20, 2017_
 
  * All code covered by tests with code coverage ~99%.
  
- # <sub>v1.0.0</sub>
+# <sub>v1.0.0</sub>
 #### _Aug. 19, 2017_
 
  * Released a stable version.
  * A few major changes in used dev-tools (eslint instead of jshint, added mocha for test and istanbul for code coverage).
  
- # <sub>v0.1.0</sub>
+# <sub>v0.1.0</sub>
 #### _Jun. 8, 2017_
 
  * `sinon` reverted from v2 to v1.
