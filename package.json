@@ -32,14 +32,13 @@
   "homepage": "https://github.com/AlexanderMac/n-assert#readme",
   "dependencies": {
     "lodash": "^4.17.4",
-    "mongoose": "^4.13.8",
-    "should": "^11.2.1",
-    "sinon": "^3.3.0"
+    "mongoose": "^5.0.1",
+    "should": "^13.2.1",
+    "sinon": "^4.2.2"
   },
   "devDependencies": {
-    "eslint": "^4.14.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.5.3",
+    "eslint": "^4.16.0",
+    "mocha": "^5.0.0",
     "nyc": "^11.4.1"
   }
 }
