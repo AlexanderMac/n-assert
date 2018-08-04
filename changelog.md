@@ -1,12 +1,18 @@
+# <sub>v3.1.0</sub>
+#### _Aug. 4, 2018_
+
+  * Added `getObjectIdStr` method, that returns `mongoose.ObjectId` in string format.
+  * Added ability to use `validateCalledFn` method to assert multiple calls. Added `callCount` and `nCall` parameters.
+
 # <sub>v3.0.0</sub>
-#### _Ja. 27, 2018_
+#### _Jan. 27, 2018_
 
  * Sinon updated to v4.x.
  * Mocha updated to v5.x, mongoose to v5.x, should to v13.x.
- * Removed unnecessary Istanbul dependecy.
+ * Removed unused Istanbul dependecy.
 
 # <sub>v2.2.0</sub>
-#### _Ja. 6, 2018_
+#### _Jan. 6, 2018_
 
  * Added `validateCalledFn` method to validate that stubbed function is called or not, and if called then with provided arguments.
  
