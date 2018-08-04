@@ -6,8 +6,8 @@ const should   = require('should');
 const sinon    = require('sinon');
 
 exports.getObjectId = mongoose.Types.ObjectId;
+exports.getObjectIdStr = exports.getObjectId().toString();
 
-// TODO: retest isEqual
 /* eslint max-statements: off */
 exports.assert = (actual, expected, isEqual) => {
   if (_assertIfExpectedIsNil(actual, expected) ||
@@ -133,34 +133,28 @@ exports.sinonMatch = (expected) => {
   });
 };
 
-exports.validateCalledFn = ({ srvc, fnName, expectedArgs, expectedMultipleArgs }) => {
+exports.validateCalledFn = ({ srvc, fnName, callCount = 1, nCall = 0, expectedArgs, expectedMultipleArgs }) => {
+  let assertion;
+
   if (!expectedArgs && !expectedMultipleArgs) {
-    should(srvc[fnName].called).equal(
-      false,
-      `Expected that ${fnName} won't be called`
-    );
+    assertion = srvc[fnName].called;
+    should(assertion).equal(false, `Expected that ${fnName} wouldn't be called`);
     return;
   }
 
-  should(srvc[fnName].calledOnce).equal(
-    true,
-    `Expected that ${fnName} called once`
-  );
+  assertion = srvc[fnName].callCount;
+  let calledMessage = callCount === 1 ? 'once' : `${callCount} times`;
+  should(assertion).equal(callCount, `Expected that ${fnName} called ${calledMessage}`);
+
   if (expectedArgs === '_without-args_') {
-    should(srvc[fnName].calledWithExactly()).equal(
-      true,
-      `Expected that ${fnName} called without args`
-    );
+    assertion = srvc[fnName].getCall(nCall).calledWithExactly();
+    should(assertion).equal(true, `Expected that ${fnName} called without args`);
   } else if (expectedMultipleArgs) {
-    should(srvc[fnName].calledWithExactly(...expectedMultipleArgs)).equal(
-      true,
-      `Expected that ${fnName} called with multiple args`
-    );
+    assertion = srvc[fnName].getCall(nCall).calledWithExactly(...expectedMultipleArgs);
+    should(assertion).equal(true, `Expected that ${fnName} called with multiple args`);
   } else {
-    should(srvc[fnName].calledWithExactly(exports.sinonMatch(expectedArgs))).equal(
-      true,
-      `Expected that ${fnName} called with single arg`
-    );
+    let assertion = srvc[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs));
+    should(assertion).equal(true, `Expected that ${fnName} called with single arg`);
   }
 };
 

@@ -113,8 +113,18 @@ Calls sinon.match and compares `actual` value with `expected` using `nassert.ass
 - **getObjectId()**<br>
 Returns new mongodb ObjectId.
 
+- **getObjectIdStr()**<br>
+Returns new mongodb ObjectId in string format.
+
 - **validateCalledFn**<br>
-Validates that stubbed function is called or not, and if called then with provided arguments.
+Validates that stubbed function is called or not, and called with provided arguments.
+
+  - `srvc` - service.
+  - `fnName` - stubbed function name in the service.
+  - `callCount` - count of function calles, one by default.
+  - `nCall` - validates that method was called with provided args on that call, zero by default.
+  - `expectedArgs` - expected _single_ argument, should be `__without-args__` if function is called without arguments.
+  - `expectedMultipleArgs` - expected _few_ arguments.
 
 ### Author
 Alexander Mac

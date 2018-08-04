@@ -345,13 +345,13 @@ describe('n-assert', () => {
       { _id: nassert.getObjectId(), name: 'Matt', email: 'matt@mail.com' }
     ];
 
-    function test(model, initialDocs, changedUser, typeOfChange) {
+    function test(model, initialDocs, changedUser, typeOfChange, sortField = 'name') {
       return nassert.assertCollection({
         model,
         initialDocs,
         changedDoc: changedUser,
         typeOfChange,
-        sortField: 'name'
+        sortField
       });
     }
 
@@ -415,11 +415,15 @@ describe('n-assert', () => {
       return test(User, initialUsers);
     });
 
-    it('should pass assertion when a new document is added', () => {
+    it('should pass assertion when no one document is changed', () => {
+      return test(User, initialUsers);
+    });
+
+    it('should pass assertion when a new document is added and sortField is null', () => {
       let changedUser = { name: 'Max', email: 'max@mail.com' };
       return User
         .create(changedUser)
-        .then(() => test(User, initialUsers, changedUser, 'created'));
+        .then(() => test(User, initialUsers, changedUser, 'created', null));
     });
 
     it('should pass assertion when an existing document is updated', () => {
@@ -567,7 +571,16 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
 
     it('should throw error when service method called, but expectedArgs and expectedMultipleArgs are not provided', () => {
       let params = getDefaultParams();
-      let expected = new Error('Expected that doWork won\'t be called');
+      let expected = new Error('Expected that doWork wouldn\'t be called');
+
+      _srvc.doWork();
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method called once, but callCount is 2', () => {
+      let params = getDefaultParams({ callCount: 2, expectedArgs: 'p1' });
+      let expected = new Error('Expected that doWork called 2 times');
 
       _srvc.doWork();
 
@@ -581,7 +594,14 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       test({ params, expected });
     });
 
-    it('should throw error when service method called twice, but expectedArgs is provided', () => {
+    it('should throw error when service method doesn\'t called, but callCount is 2', () => {
+      let params = getDefaultParams({ callCount: 2, expectedArgs: 'p1' });
+      let expected = new Error('Expected that doWork called 2 times');
+
+      test({ params, expected });
+    });
+
+    it('should throw error when service method called twice and expectedArgs is provided', () => {
       let params = getDefaultParams({ expectedArgs: 'p1' });
       let expected = new Error('Expected that doWork called once');
 
