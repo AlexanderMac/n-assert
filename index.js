@@ -3,10 +3,12 @@
 const _        = require('lodash');
 const mongoose = require('mongoose');
 const should   = require('should');
-const sinon    = require('sinon');
 
+let _sinon;
 exports.getObjectId = mongoose.Types.ObjectId;
 exports.getObjectIdStr = exports.getObjectId().toString();
+
+exports.initSinon = (sinon) => _sinon = sinon;
 
 /* eslint max-statements: off */
 exports.assert = (actual, expected, isEqual) => {
@@ -122,7 +124,7 @@ exports.resolveOrReject = (err, resolve, reject) => {
 };
 
 exports.sinonMatch = (expected) => {
-  return sinon.match(actual => {
+  return _sinon.match(actual => {
     try {
       exports.assert(actual, expected);
       return true;

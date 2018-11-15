@@ -108,7 +108,7 @@ Calls `reject` if `err` is not null or undefined, otherwise `resolve`.
   - `reject` - callback, is called when `err` is undefined.
 
 - **sinonMatch(expected)**<br>
-Calls sinon.match and compares `actual` value with `expected` using `nassert.assert`. Returns true if they are the same, otherwiser throws an error.
+Calls sinon.match and compares `actual` value with `expected` using `nassert.assert`. Returns true if they are the same, otherwiser throws an error. **Warning!** To use `sinonMatch` function, sinon instance should be initialized via `nassert.initSinon(sinon)` method.
 
 - **getObjectId()**<br>
 Returns new mongodb ObjectId.
@@ -117,7 +117,7 @@ Returns new mongodb ObjectId.
 Returns new mongodb ObjectId in string format.
 
 - **validateCalledFn**<br>
-Validates that stubbed function is called or not, and called with provided arguments.
+Validates that stubbed function is called or not, and called with provided arguments. **Warning!** To use `sinonMatch` function, sinon instance should be initialized via `nassert.initSinon(sinon)` method.
 
   - `srvc` - service.
   - `fnName` - stubbed function name in the service.

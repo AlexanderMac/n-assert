@@ -17,6 +17,8 @@ const UserSchema = new Schema({
 mongoose.model('user', UserSchema);
 const User = mongoose.model('user');
 
+nassert.initSinon(sinon);
+
 describe('n-assert', () => {
   describe('assert', () => {
     function test(actual, expected, isEqual, expectedErr) {
@@ -356,8 +358,8 @@ describe('n-assert', () => {
     }
 
     before(() => {
-      const MONGODB_URL = 'mongodb://localhost/nassert';
-      return mongoose.connection.openUri(MONGODB_URL);
+      const MONGODB_URL = 'mongodb://localhost:27017/nassert';
+      return mongoose.connection.openUri(MONGODB_URL, { useNewUrlParser: true });
     });
 
     beforeEach(() => User.create(initialUsers));
