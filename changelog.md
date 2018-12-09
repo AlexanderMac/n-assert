@@ -1,7 +1,7 @@
 # <sub>v4.0.0</sub>
 #### _Nov. 15, 2018_
 
-  * Remove Sinon dependency, not it should be passed via `nassert.initSinon` method.
+  * Remove Sinon dependency, now it should be passed via `nassert.initSinon` method.
 
 # <sub>v3.1.0</sub>
 #### _Aug. 4, 2018_
