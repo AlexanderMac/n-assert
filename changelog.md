@@ -1,7 +1,17 @@
+# <sub>v5.0.0</sub>
+#### _Apr. 5, 2019_
+
+  * Removed mongoose methods. To generate and validate ObjectId, bson package has been installed.
+  * Method `assertCollection` moved to a new package [mongo-assert](https://github.com/AlexanderMac/mongo-assert).
+  * Removed `processError` method.
+  * Removed `resolveOrReject` method.
+  * Method `validateCalledFn` renamed to `assertFn`, `srvc` parameter changed to `inst`.
+  * All packages updated to the latest versions.
+
 # <sub>v4.0.0</sub>
 #### _Nov. 15, 2018_
 
-  * Remove Sinon dependency, now it should be passed via `nassert.initSinon` method.
+  * Removed `sinon` dependency, now it should be passed via `nassert.initSinon` method.
 
 # <sub>v3.1.0</sub>
 #### _Aug. 4, 2018_
