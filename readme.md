@@ -49,12 +49,6 @@ nassert.assert(actual, expected);
 ```bash
 # Add to project
 $ npm i -S n-assert
-# Run tests
-$ npm run tests
-# Run linter
-$ npm run lint
-# Run coverage tool
-$ npm run coverage
 ```
 
 ### Usage
