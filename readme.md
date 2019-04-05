@@ -1,12 +1,12 @@
 # n-assert
-Node.js assertion helper library.
+Node.js assertion library.
 
 [![Build Status](https://travis-ci.org/AlexanderMac/n-assert.svg?branch=master)](https://travis-ci.org/AlexanderMac/n-assert)
 [![Code Coverage](https://codecov.io/gh/AlexanderMac/n-assert/branch/master/graph/badge.svg)](https://codecov.io/gh/AlexanderMac/n-assert)
 [![npm version](https://badge.fury.io/js/n-assert.svg)](https://badge.fury.io/js/n-assert)
 
 ### Why
-This library is created to assert complex objects.
+This library is created to assert the complex objects.
 
 ```js
 // Some test method returns this object

@@ -1,7 +1,7 @@
 {
   "name": "n-assert",
   "version": "5.0.0",
-  "description": "Node assertion helper library",
+  "description": "Node assertion library",
   "main": "index.js",
   "files": [
     "index.js"
