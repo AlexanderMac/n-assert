@@ -47,8 +47,8 @@ nassert.assert(actual, expected);
 
 ### Commands
 ```bash
-# Add to project
-$ npm i -S n-assert
+# Add to project, should install it as dev dependency
+$ npm i -D n-assert
 ```
 
 ### Usage
