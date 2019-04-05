@@ -6,9 +6,6 @@ node_js:
   - "10"
   - "node"
 
-services:
-  - mongodb
-
 install:
   - npm install
   - npm install -g codecov istanbul
