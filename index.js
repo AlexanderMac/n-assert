@@ -1,13 +1,13 @@
 'use strict';
 
-const _        = require('lodash');
-const mongoose = require('mongoose');
-const should   = require('should');
+const _      = require('lodash');
+const bson   = require('bson');
+const should = require('should');
 
-let _sinon;
-exports.getObjectId = mongoose.Types.ObjectId;
+exports.getObjectId = () => new bson.ObjectId();
 exports.getObjectIdStr = exports.getObjectId().toString();
 
+let _sinon;
 exports.initSinon = (sinon) => _sinon = sinon;
 
 /* eslint max-statements: off */
@@ -19,7 +19,7 @@ exports.assert = (actual, expected, isEqual) => {
     return;
   }
 
-  actual = _convertMongooseDocsToPlainObjects(actual);
+  actual = _convertModelsToPlain(actual);
 
   let expectedPaths = _getObjectPaths(expected);
   if (isEqual) {
@@ -54,72 +54,28 @@ exports.assertResponse = (res, expectedStatus, expectedBody) => {
   }
 };
 
-exports.assertCollection = ({ model, initialDocs, changedDoc, typeOfChange, sortField }) => {
-  if (!model) {
-    throw new Error('<model> is undefined');
-  }
-  if (!_.isFunction(model.find)) {
-    throw new Error('<model> is not mongoose model');
-  }
-  if (!_.isArray(initialDocs)) {
-    throw new Error('<initialDocs> is undefined or not an array of documents');
-  }
-  if (typeOfChange) {
-    if (!_.includes(['created', 'updated', 'deleted'], typeOfChange)) {
-      throw new Error('Unknown <typeOfChange>');
-    }
-    if (!changedDoc) {
-      throw new Error('<changedDoc> must be defined, when <typeOfChange> is defined');
-    }
+exports.assertFn = ({ inst, fnName, callCount = 1, nCall = 0, expectedArgs, expectedMultipleArgs }) => {
+  let assertion;
+
+  if (!expectedArgs && !expectedMultipleArgs) {
+    assertion = inst[fnName].called;
+    should(assertion).equal(false, `Expected that ${fnName} wouldn't be called`);
+    return;
   }
 
-  let expectedDocs = _.cloneDeep(initialDocs);
-  return model
-    .find()
-    .lean()
-    .exec()
-    .then(actualDocs => {
-      switch (typeOfChange) {
-        case 'created':
-          expectedDocs.push(changedDoc);
-          break;
-        case 'updated':
-          let t = _.find(expectedDocs, doc => _safeToString(doc._id) === _safeToString(changedDoc._id));
-          _.extend(t, changedDoc);
-          break;
-        case 'deleted':
-          _.remove(expectedDocs, doc => _safeToString(doc._id) === _safeToString(changedDoc._id));
-          break;
-      }
+  assertion = inst[fnName].callCount;
+  let calledMessage = callCount === 1 ? 'once' : `${callCount} times`;
+  should(assertion).equal(callCount, `Expected that ${fnName} called ${calledMessage}`);
 
-      if (sortField) {
-        actualDocs = _.sortBy(actualDocs, sortField);
-        expectedDocs = _.sortBy(expectedDocs, sortField);
-      }
-
-      exports.assert(actualDocs, expectedDocs);
-      return null;
-    });
-};
-
-exports.processError = (actual, expected, done) => {
-  if (expected instanceof Error) {
-    try {
-      should(actual).eql(expected);
-      done();
-    } catch (err) {
-      done(err);
-    }
+  if (expectedArgs === '_without-args_') {
+    assertion = inst[fnName].getCall(nCall).calledWithExactly();
+    should(assertion).equal(true, `Expected that ${fnName} called without args`);
+  } else if (expectedMultipleArgs) {
+    assertion = inst[fnName].getCall(nCall).calledWithExactly(...expectedMultipleArgs);
+    should(assertion).equal(true, `Expected that ${fnName} called with multiple args`);
   } else {
-    done(actual);
-  }
-};
-
-exports.resolveOrReject = (err, resolve, reject) => {
-  if (err) {
-    reject(err);
-  } else {
-    resolve();
+    let assertion = inst[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs));
+    should(assertion).equal(true, `Expected that ${fnName} called with single arg`);
   }
 };
 
@@ -135,48 +91,14 @@ exports.sinonMatch = (expected) => {
   });
 };
 
-exports.validateCalledFn = ({ srvc, fnName, callCount = 1, nCall = 0, expectedArgs, expectedMultipleArgs }) => {
-  let assertion;
-
-  if (!expectedArgs && !expectedMultipleArgs) {
-    assertion = srvc[fnName].called;
-    should(assertion).equal(false, `Expected that ${fnName} wouldn't be called`);
-    return;
-  }
-
-  assertion = srvc[fnName].callCount;
-  let calledMessage = callCount === 1 ? 'once' : `${callCount} times`;
-  should(assertion).equal(callCount, `Expected that ${fnName} called ${calledMessage}`);
-
-  if (expectedArgs === '_without-args_') {
-    assertion = srvc[fnName].getCall(nCall).calledWithExactly();
-    should(assertion).equal(true, `Expected that ${fnName} called without args`);
-  } else if (expectedMultipleArgs) {
-    assertion = srvc[fnName].getCall(nCall).calledWithExactly(...expectedMultipleArgs);
-    should(assertion).equal(true, `Expected that ${fnName} called with multiple args`);
-  } else {
-    let assertion = srvc[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs));
-    should(assertion).equal(true, `Expected that ${fnName} called with single arg`);
-  }
-};
-
-function _isSimplePrim(prim) {
-  return _.isBoolean(prim) ||
-         _.isNumber(prim) ||
-         _.isString(prim) ||
-         _.isDate(prim) ||
-         _.isSymbol(prim) ||
-         _.isRegExp(prim);
-}
-
-function _convertMongooseDocsToPlainObjects(actual) {
-  if (actual instanceof mongoose.Document) {
+function _convertModelsToPlain(actual) {
+  if (_isMongooseModel(actual)) {
     return actual.toObject();
   }
 
   if (_.isArray(actual)) {
     return _.map(actual, item => {
-      if (item instanceof mongoose.Document) {
+      if (_isMongooseModel(actual)) {
         return item.toObject();
       }
       return item;
@@ -187,7 +109,7 @@ function _convertMongooseDocsToPlainObjects(actual) {
 }
 
 function _assert(field, actual, expected) {
-  if (field === '_id' || expected instanceof mongoose.Types.ObjectId) {
+  if (field === '_id' || expected instanceof bson.ObjectId) {
     _assertObjectId(actual, expected);
   } else if (field === '__v') {
     should(actual).instanceOf(Number);
@@ -235,6 +157,19 @@ function _assertIfExpectedIsSimplePrim(actual, expected) {
   return true;
 }
 
+function _isSimplePrim(prim) {
+  return _.isBoolean(prim) ||
+         _.isNumber(prim) ||
+         _.isString(prim) ||
+         _.isDate(prim) ||
+         _.isSymbol(prim) ||
+         _.isRegExp(prim);
+}
+
+function _isMongooseModel(val) {
+  return _.get(val, 'constructor.name') === 'model' && _.isFunction(val.toObject);
+}
+
 function _safeToString(val) {
   return _.isNil(val) ? val : val.toString();
 }
@@ -242,7 +177,7 @@ function _safeToString(val) {
 function _getObjectPaths(item, curPath = '', isArray = false) {
   let paths = [];
   _.each(item, (val, key) => {
-    if (val instanceof mongoose.Types.ObjectId) {
+    if (val instanceof bson.ObjectId) {
       val = _safeToString(val);
     }
     let newPath = isArray ? `${curPath}[${key}]` : `${curPath}.${key}`;

@@ -61,9 +61,9 @@ $ npm run coverage
 ```js
 let nassert = require('n-assert');
 
-should('should find user by name', => {
-  let actual = usersSrvc.getUserByName('John');
-  let expected = { ... };
+should('should find user by name', async () => {
+  let actual = await usersSrvc.getUserByName('John');
+  let expected = { /* some data */ };
 
   nassert.assert(actual, expected);
 })
@@ -71,60 +71,37 @@ should('should find user by name', => {
 
 ### API
 - **assert(actual, expected, isEqual)**<br>
-Asserts if `actual` is equal to `expected`.
+Asserts that `actual` is equal to `expected`.
 
-  - `actual` - actual object, can be null|undefined.
-  - `expected` - expected object, can be null|undefined.
-  - `isEqual` - if passed, performs a deep assertion between two values to determine if they are equivalent. 
+  - `actual` - actual object.
+  - `expected` - expected object.
+  - `isEqual` - performs a deep assertion between `actual` and `expected` to determine that they are indentical. 
 
 - **assertResponse(res, expectedStatus, expectedBody)**<br>
-Asserts if status and body in `res` is equal to `expectedStatus` and `expectedBody`.
+Asserts that status and body in `res` is equal to `expectedStatus` and `expectedBody`.
 
   - `res` - http response.
   - `expectedStatus` - expected http response status.
   - `expectedBody` - expected http response body.
 
-- **assertCollection({ model, initialDocs, changedDoc, typeOfChange, sortField })**<br>
-Asserts mongodb collection. Loads all collection documents, updates an initial collection with changed document and asserts.
+- **assertFn**<br>
+Asserts that stubbed function has been called or not, and if called, then with provided arguments. **Warning!** To use `sinonMatch` function, sinon instance should be initialized via `nassert.initSinon(sinon)` method.
 
-  - `model` - mongoose model.
-  - `initialDocs` - initial documents collection.
-  - `changedDoc` - changed document, must be omitted or undefined if collection is unchanged.
-  - `typeOfChange` - the type of the change (_created_, _updated_, _deleted_), must be omitted if collection is unchanged.
-  - `sortField` - the field which should be used for sorting actual and expected collections before asseting.
-
-- **processError(actual, expected, done)**<br>
-Asserts if `actual` is error object and is equal to `expected`.
-
-  - `actual` - actual error object.
-  - `expected` - expected error object.
-  - `done` - mocha callback, is called with error when `actual` is not equal to `expected`, otherwise without parameters.
-
-- **resolveOrReject(err, resolve, reject)**<br>
-Calls `reject` if `err` is not null or undefined, otherwise `resolve`.
-
-  - `err` - error object, can be null|undefined.
-  - `resolve` - callback, is called when `err` is not null or undefined.
-  - `reject` - callback, is called when `err` is undefined.
+  - `inst` - object instance.
+  - `fnName` - stubbed function name in the service.
+  - `callCount` - count of function calles, one by default.
+  - `nCall` - validates that method was called with provided args on that call, zero by default.
+  - `expectedArgs` - expected _single_ argument, should be `__without-args__` if function is called without arguments.
+  - `expectedMultipleArgs` - expected _few_ arguments.
 
 - **sinonMatch(expected)**<br>
-Calls sinon.match and compares `actual` value with `expected` using `nassert.assert`. Returns true if they are the same, otherwiser throws an error. **Warning!** To use `sinonMatch` function, sinon instance should be initialized via `nassert.initSinon(sinon)` method.
+Calls sinon.match and compares `actual` value with `expected` using `nassert.assert`. Returns `true` if values identical, otherwise throws an error. **Warning!** To use `sinonMatch` function, sinon instance should be initialized via `nassert.initSinon(sinon)` method.
 
 - **getObjectId()**<br>
 Returns new mongodb ObjectId.
 
 - **getObjectIdStr()**<br>
 Returns new mongodb ObjectId in string format.
-
-- **validateCalledFn**<br>
-Validates that stubbed function is called or not, and called with provided arguments. **Warning!** To use `sinonMatch` function, sinon instance should be initialized via `nassert.initSinon(sinon)` method.
-
-  - `srvc` - service.
-  - `fnName` - stubbed function name in the service.
-  - `callCount` - count of function calles, one by default.
-  - `nCall` - validates that method was called with provided args on that call, zero by default.
-  - `expectedArgs` - expected _single_ argument, should be `__without-args__` if function is called without arguments.
-  - `expectedMultipleArgs` - expected _few_ arguments.
 
 ### Author
 Alexander Mac

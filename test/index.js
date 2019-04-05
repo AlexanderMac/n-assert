@@ -1,21 +1,9 @@
 'use strict';
 
 const _        = require('lodash');
-const mongoose = require('mongoose');
 const should   = require('should');
 const sinon    = require('sinon');
 const nassert  = require('../index');
-
-mongoose.Promise = global.Promise;
-
-const Schema = mongoose.Schema;
-const UserSchema = new Schema({
-  name: String,
-  email: String
-});
-
-mongoose.model('user', UserSchema);
-const User = mongoose.model('user');
 
 nassert.initSinon(sinon);
 
@@ -35,31 +23,6 @@ describe('n-assert', () => {
         }
       }
     }
-
-    describe('actual is Mongoose document', () => {
-      it('should convert a single actual Mongoose document to a plain object', () => {
-        let actual = new User({
-          name: 'John',
-          email: 'john@mail.com'
-        });
-        let expected = {
-          name: 'John',
-          email: 'john@mail.com'
-        };
-        test(actual, expected);
-      });
-
-      it('should convert an array of actual Mongoose document to plain objects', () => {
-        let actual = [
-          new User({ name: 'John', email: 'john@mail.com' }),
-          new User({ name: 'Donald', email: 'donald@mail.com' })
-        ];
-        let expected = [
-          { name: 'John', email: 'john@mail.com' }
-        ];
-        test(actual, expected);
-      });
-    });
 
     describe('isEqual is passed', () => {
       it('should fail when isEqual is passed and expected not equal to actual', () => {
@@ -340,178 +303,6 @@ describe('n-assert', () => {
     });
   });
 
-  describe('assertCollection', () => {
-    let initialUsers = [
-      { _id: nassert.getObjectId(), name: 'John', email: 'john@mail.com' },
-      { _id: nassert.getObjectId(), name: 'Ted', email: 'ted@mail.com' },
-      { _id: nassert.getObjectId(), name: 'Matt', email: 'matt@mail.com' }
-    ];
-
-    function test(model, initialDocs, changedUser, typeOfChange, sortField = 'name') {
-      return nassert.assertCollection({
-        model,
-        initialDocs,
-        changedDoc: changedUser,
-        typeOfChange,
-        sortField
-      });
-    }
-
-    before(() => {
-      const MONGODB_URL = 'mongodb://localhost:27017/nassert';
-      return mongoose.connection.openUri(MONGODB_URL, { useNewUrlParser: true });
-    });
-
-    beforeEach(() => User.create(initialUsers));
-
-    afterEach(() => User.remove());
-
-    after(() => mongoose.connection.close());
-
-    it('should throw an error when model is undefined', () => {
-      let changedUser = { name: 'Max', email: 'max@mail.com' };
-      let expectedError = new Error('<model> is undefined');
-      return User
-        .create(changedUser)
-        .then(() => test(undefined, initialUsers, changedUser, 'created'))
-        .catch(err => should(err).eql(expectedError));
-    });
-
-    it('should throw an error when model is not mongoose model', () => {
-      let changedUser = { name: 'Max', email: 'max@mail.com' };
-      let expectedError = new Error('<model> is not mongoose model');
-      return User
-        .create(changedUser)
-        .then(() => test({}, initialUsers, changedUser, 'created'))
-        .catch(err => should(err).eql(expectedError));
-    });
-
-    it('should throw an error when intialCollection is not an array', () => {
-      let changedUser = { name: 'Max', email: 'max@mail.com' };
-      let expectedError = new Error('<initialDocs> is undefined or not an array of documents');
-      return User
-        .create(changedUser)
-        .then(() => test(User, initialUsers[0], changedUser, 'created'))
-        .catch(err => should(err).eql(expectedError));
-    });
-
-    it('should throw an error when typeOfChange has invalid value', () => {
-      let changedUser = { name: 'Max', email: 'max@mail.com' };
-      let expectedError = new Error('Unknown <typeOfChange>');
-      return User
-        .create(changedUser)
-        .then(() => test(User, initialUsers, changedUser, 'wrong type'))
-        .catch(err => should(err).eql(expectedError));
-    });
-
-    it('should throw an error when typeOfChange is defined, but changedDoc not', () => {
-      let changedUser = { name: 'Max', email: 'max@mail.com' };
-      let expectedError = new Error('<changedDoc> must be defined, when <typeOfChange> is defined');
-      return User
-        .create(changedUser)
-        .then(() => test(User, initialUsers, undefined, 'created'))
-        .catch(err => should(err).eql(expectedError));
-    });
-
-    it('should pass assertion when no one document is changed', () => {
-      return test(User, initialUsers);
-    });
-
-    it('should pass assertion when no one document is changed', () => {
-      return test(User, initialUsers);
-    });
-
-    it('should pass assertion when a new document is added and sortField is null', () => {
-      let changedUser = { name: 'Max', email: 'max@mail.com' };
-      return User
-        .create(changedUser)
-        .then(() => test(User, initialUsers, changedUser, 'created', null));
-    });
-
-    it('should pass assertion when an existing document is updated', () => {
-      let changedUser = { _id: initialUsers[1]._id, name: 'Roy', email: 'roy@mail.com' };
-      return User
-        .findById(changedUser._id)
-        .then(user => {
-          _.extend(user, changedUser);
-          return user.save();
-        })
-        .then(() => test(User, initialUsers, changedUser, 'updated'));
-    });
-
-    it('should pass assertion when an existing document is deleted', () => {
-      let changedUser = { _id: initialUsers[2]._id.toString() };
-      return User
-        .findById(changedUser._id)
-        .then(user => user.remove())
-        .then(() => test(User, initialUsers, changedUser, 'deleted'));
-    });
-  });
-
-  describe('processError', () => {
-    function test(actual, expected, expectedCalledWith) {
-      let done = sinon.spy();
-
-      nassert.processError(actual, expected, done);
-      should(done.calledOnce).be.true();
-      if (!expectedCalledWith) {
-        should(done.calledWithExactly()).be.true();
-      } else {
-        should(done.calledWith(sinon.match((actual => {
-          return actual.message === expectedCalledWith.message;
-        })))).be.true();
-      }
-    }
-
-    it('should call done with an error when expected is not an error', () => {
-      let actual = new Error('err1');
-      let expected = true;
-      let expectedCalledWith = actual;
-      test(actual, expected, expectedCalledWith);
-    });
-
-    it('should call done with an error when actual and expected are errors but not equal', () => {
-      let actual = new Error('err1');
-      let expected = new Error('err2');
-      let expectedCalledWith = new Error('expected Error { message: \'err1\' } to \
-equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\')');
-      test(actual, expected, expectedCalledWith);
-    });
-
-    it('should call done without params when expected is an error and actual is equal to expected', () => {
-      let actual = new Error('err1');
-      let expected = new Error('err1');
-      let expectedCalledWith = undefined;
-      test(actual, expected, expectedCalledWith);
-    });
-  });
-
-  describe('resolveOrReject', () => {
-    function test(err, expectResolveIsCalled) {
-      let resolve = sinon.spy();
-      let reject = sinon.spy();
-
-      nassert.resolveOrReject(err, resolve, reject);
-      if (expectResolveIsCalled) {
-        should(resolve.calledOnce).be.true();
-      } else {
-        should(reject.calledOnce).be.true();
-      }
-    }
-
-    it('should call resolve when err is undefined', () => {
-      let err = undefined;
-      let expectResolveIsCalled = true;
-      test(err, expectResolveIsCalled);
-    });
-
-    it('should call reject when err is not undefined', () => {
-      let err = new Error();
-      let expectResolveIsCalled = false;
-      test(err, expectResolveIsCalled);
-    });
-  });
-
   describe('sinonMatch', () => {
     function test(actualVal, expectedVal, expectedRes) {
       let match = nassert.sinonMatch(expectedVal);
@@ -542,30 +333,30 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
     });
   });
 
-  describe('validateCalledFn', () => {
-    let _srvc = {
+  describe('assertFn', () => {
+    let _inst = {
       doWork: () => {}
     };
 
     beforeEach(() => {
-      sinon.stub(_srvc, 'doWork');
+      sinon.stub(_inst, 'doWork');
     });
 
     afterEach(() => {
-      _srvc.doWork.restore();
+      _inst.doWork.restore();
     });
 
     function test({ params, expected }) {
       if (_.isError(expected)) {
-        should(nassert.validateCalledFn.bind(nassert, params)).throw(expected.message);
+        should(nassert.assertFn.bind(nassert, params)).throw(expected.message);
       } else {
-        nassert.validateCalledFn(params);
+        nassert.assertFn(params);
       }
     }
 
     function getDefaultParams(ex) {
       let params = {
-        srvc: _srvc,
+        inst: _inst,
         fnName: 'doWork'
       };
       return _.extend(params, ex);
@@ -575,7 +366,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       let params = getDefaultParams();
       let expected = new Error('Expected that doWork wouldn\'t be called');
 
-      _srvc.doWork();
+      _inst.doWork();
 
       test({ params, expected });
     });
@@ -584,7 +375,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       let params = getDefaultParams({ callCount: 2, expectedArgs: 'p1' });
       let expected = new Error('Expected that doWork called 2 times');
 
-      _srvc.doWork();
+      _inst.doWork();
 
       test({ params, expected });
     });
@@ -607,8 +398,8 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       let params = getDefaultParams({ expectedArgs: 'p1' });
       let expected = new Error('Expected that doWork called once');
 
-      _srvc.doWork('p1');
-      _srvc.doWork('p1');
+      _inst.doWork('p1');
+      _inst.doWork('p1');
 
       test({ params, expected });
     });
@@ -617,7 +408,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       let params = getDefaultParams({ expectedArgs: '_without-args_' });
       let expected = new Error('Expected that doWork called without args');
 
-      _srvc.doWork('p1');
+      _inst.doWork('p1');
 
       test({ params, expected });
     });
@@ -626,7 +417,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       let params = getDefaultParams({ expectedMultipleArgs: ['p1', 'p2'] });
       let expected = new Error('Expected that doWork called with multiple args');
 
-      _srvc.doWork('p1', 'p3');
+      _inst.doWork('p1', 'p3');
 
       test({ params, expected });
     });
@@ -635,7 +426,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
       let params = getDefaultParams({ expectedArgs: 'p2' });
       let expected = new Error(`sinon.match AssertionError: expected 'p1' to equal 'p2'`);
 
-      _srvc.doWork('p1');
+      _inst.doWork('p1');
 
       test({ params, expected });
     });
@@ -649,7 +440,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
     it('shouldn\'t throw error when service method called without args and expectedArgs is `_without-args_`', () => {
       let params = getDefaultParams({ expectedArgs: '_without-args_' });
 
-      _srvc.doWork();
+      _inst.doWork();
 
       test({ params, expected: null });
     });
@@ -657,7 +448,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
     it('shouldn\'t throw error when service method called with [p1, p2] and expectedMultipleArgs is [p1, p2]', () => {
       let params = getDefaultParams({ expectedMultipleArgs: ['p1', 'p2'] });
 
-      _srvc.doWork('p1', 'p2');
+      _inst.doWork('p1', 'p2');
 
       test({ params, expected: null });
     });
@@ -665,7 +456,7 @@ equal Error { message: \'err2\' } (at message, A has \'err1\' and B has \'err2\'
     it('shouldn\'t throw error when service method called with p1 and expectedArgs is p1', () => {
       let params = getDefaultParams({ expectedArgs: 'p1' });
 
-      _srvc.doWork('p1');
+      _inst.doWork('p1');
 
       test({ params, expected: null });
     });
