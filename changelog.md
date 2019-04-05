@@ -1,9 +1,4 @@
-# <sub>v5.0.1</sub>
-#### _Apr. 5, 2019_
-
-  * Minor improvements.
-
-# <sub>v5.0.0</sub>
+# <sub>v5.0.2</sub>
 #### _Apr. 5, 2019_
 
   * Removed mongoose methods. To generate and validate ObjectId, bson package has been installed.
