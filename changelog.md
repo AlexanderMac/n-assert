@@ -1,3 +1,8 @@
+# <sub>v5.0.1</sub>
+#### _Apr. 5, 2019_
+
+  * Minor improvements.
+
 # <sub>v5.0.0</sub>
 #### _Apr. 5, 2019_
 
