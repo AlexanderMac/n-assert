@@ -53,7 +53,7 @@ $ npm i -S n-assert
 
 ### Usage
 ```js
-let nassert = require('n-assert');
+const nassert = require('n-assert');
 
 should('should find user by name', async () => {
   let actual = await usersSrvc.getUserByName('John');
