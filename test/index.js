@@ -24,6 +24,35 @@ describe('n-assert', () => {
       }
     }
 
+    describe.skip('actual is Mongoose document', () => {
+      function User() {
+        // TODO: implement
+      }
+
+      it('should convert a single actual Mongoose document to a plain object', () => {
+        let actual = new User({
+          name: 'John',
+          email: 'john@mail.com'
+        });
+        let expected = {
+          name: 'John',
+          email: 'john@mail.com'
+        };
+        test(actual, expected);
+      });
+
+      it('should convert an array of actual Mongoose document to plain objects', () => {
+        let actual = [
+          new User({ name: 'John', email: 'john@mail.com' }),
+          new User({ name: 'Donald', email: 'donald@mail.com' })
+        ];
+        let expected = [
+          { name: 'John', email: 'john@mail.com' }
+        ];
+        test(actual, expected);
+      });
+    });
+
     describe('isEqual is passed', () => {
       it('should fail when isEqual is passed and expected not equal to actual', () => {
         let actual = [
