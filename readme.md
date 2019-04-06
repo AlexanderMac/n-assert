@@ -60,7 +60,7 @@ should('should find user by name', async () => {
   let expected = { /* some data */ };
 
   nassert.assert(actual, expected);
-})
+});
 ```
 
 ### API
