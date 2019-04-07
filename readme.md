@@ -5,7 +5,7 @@ Node.js assertion library.
 [![Code Coverage](https://codecov.io/gh/AlexanderMac/n-assert/branch/master/graph/badge.svg)](https://codecov.io/gh/AlexanderMac/n-assert)
 [![npm version](https://badge.fury.io/js/n-assert.svg)](https://badge.fury.io/js/n-assert)
 
-### Why
+## Why
 This library is created to assert the complex objects.
 
 ```js
@@ -45,13 +45,13 @@ let expected = {
 nassert.assert(actual, expected);
 ```
 
-### Commands
+## Commands
 ```bash
 # Add to project, should install it as dev dependency
 $ npm i -D n-assert
 ```
 
-### Usage
+## Usage
 ```js
 const nassert = require('n-assert');
 
@@ -63,7 +63,7 @@ should('should find user by name', async () => {
 });
 ```
 
-### API
+## API
 - **assert(actual, expected, isEqual)**<br>
 Asserts that `actual` is equal to `expected`.
 
@@ -97,8 +97,8 @@ Returns new mongodb ObjectId.
 - **getObjectIdStr()**<br>
 Returns new mongodb ObjectId in string format.
 
-### Author
+## Author
 Alexander Mac
 
-### License
+## License
 Licensed under the MIT license.
