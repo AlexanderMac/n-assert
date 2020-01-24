@@ -14,9 +14,11 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage
+.nyc_output
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
+# Compiled
 build/Release
+dist
 
 # Dependency directory
 node_modules
