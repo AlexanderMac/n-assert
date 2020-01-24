@@ -1,9 +1,7 @@
-'use strict';
-
-const _        = require('lodash');
-const should   = require('should');
-const sinon    = require('sinon');
-const nassert  = require('../index');
+const _ = require('lodash');
+const should = require('should');
+const sinon = require('sinon');
+const nassert = require('../index');
 
 nassert.initSinon(sinon);
 
@@ -207,7 +205,7 @@ describe('n-assert', () => {
         let actual = getDefActual({ _id: objId });
         let expected = {
           _id: objId,
-          __v: 'v',          // can be any value
+          __v: 'v', // can be any value
           createdAt: 'date', // can be any value
           updatedAt: 'date', // can be any value,
           name: 'John Smith'
@@ -234,7 +232,7 @@ describe('n-assert', () => {
         };
         let expected = {
           _id: objId.toString(),
-          __v: 'v',          // can be any value
+          __v: 'v', // can be any value
           createdAt: 'date', // can be any value
           updatedAt: 'date', // can be any value,
           name: 'John Smith',

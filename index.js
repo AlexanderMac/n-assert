@@ -1,7 +1,5 @@
-'use strict';
-
-const _      = require('lodash');
-const bson   = require('bson');
+const _ = require('lodash');
+const bson = require('bson');
 const should = require('should');
 
 exports.getObjectId = () => new bson.ObjectId();
@@ -74,7 +72,7 @@ exports.assertFn = ({ inst, fnName, callCount = 1, nCall = 0, expectedArgs, expe
     assertion = inst[fnName].getCall(nCall).calledWithExactly(...expectedMultipleArgs);
     should(assertion).equal(true, `Expected that ${fnName} called with multiple args`);
   } else {
-    let assertion = inst[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs));
+    assertion = inst[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs));
     should(assertion).equal(true, `Expected that ${fnName} called with single arg`);
   }
 };
