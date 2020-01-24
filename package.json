@@ -7,7 +7,7 @@
     "index.js"
   ],
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "scripts": {
     "lint": "eslint --ext .js index.js test/",
@@ -31,14 +31,14 @@
   },
   "homepage": "https://github.com/AlexanderMac/n-assert#readme",
   "dependencies": {
-    "bson": "^4.0.2",
-    "lodash": "^4.17.11",
+    "bson": "^4.0.3",
+    "lodash": "^4.17.15",
     "should": "^13.2.3"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
-    "sinon": "^7.3.1"
+    "eslint": "^6.8.0",
+    "mocha": "^7.0.0",
+    "nyc": "^15.0.0",
+    "sinon": "^8.1.1"
   }
 }
