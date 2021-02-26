@@ -1,3 +1,8 @@
+# <sub>v7.0.0</sub>
+#### _Feb. 26, 2021_
+  * Drop support for Node versions prior to v12.
+  * Update dependencies.
+
 # <sub>v6.0.0</sub>
 #### _Jan. 24, 2020_
   * Drop support for Node v6.
