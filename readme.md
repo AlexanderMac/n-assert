@@ -1,7 +1,7 @@
 # n-assert
 Node.js assertion library.
 
-[![Build Status](https://travis-ci.org/AlexanderMac/n-assert.svg?branch=master)](https://travis-ci.org/AlexanderMac/n-assert)
+[![Build Status](https://github.com/AlexanderMac/n-assert/workflows/CI/badge.svg)](https://github.com/AlexanderMac/express-starter/actions?query=workflow%3ACI)
 [![Code Coverage](https://codecov.io/gh/AlexanderMac/n-assert/branch/master/graph/badge.svg)](https://codecov.io/gh/AlexanderMac/n-assert)
 [![npm version](https://badge.fury.io/js/n-assert.svg)](https://badge.fury.io/js/n-assert)
 
@@ -23,7 +23,7 @@ let actual = {
     registered: '2010-04-21'
   },
   createdAt: '2017-02-03'
-};
+}
 
 // Ned to do the following assertions:
 //   _id is exists
@@ -42,7 +42,7 @@ let expected = {
   }
 }
 
-nassert.assert(actual, expected);
+nassert.assert(actual, expected)
 ```
 
 ## Commands
@@ -53,14 +53,14 @@ $ npm i -D n-assert
 
 ## Usage
 ```js
-const nassert = require('n-assert');
+const nassert = require('n-assert')
 
 should('should find user by name', async () => {
-  let actual = await usersSrvc.getUserByName('John');
-  let expected = { /* some data */ };
+  let actual = await usersSrvc.getUserByName('John')
+  let expected = { /* some data */ }
 
-  nassert.assert(actual, expected);
-});
+  nassert.assert(actual, expected)
+})
 ```
 
 ## API
