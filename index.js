@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const bson = require('bson');
-const should = require('should');
+const _ = require('lodash')
+const bson = require('bson')
+const should = require('should')
 
-exports.getObjectId = () => new bson.ObjectId();
-exports.getObjectIdStr = exports.getObjectId().toString();
+exports.getObjectId = () => new bson.ObjectId()
+exports.getObjectIdStr = exports.getObjectId().toString()
 
-let _sinon;
-exports.initSinon = (sinon) => _sinon = sinon;
+let _sinon
+exports.initSinon = (sinon) => _sinon = sinon
 
 /* eslint max-statements: off */
 exports.assert = (actual, expected, isEqual) => {
@@ -14,145 +14,145 @@ exports.assert = (actual, expected, isEqual) => {
       _assertIfExpectedIsSimplePrim(actual, expected) ||
       _assertIfExpectedIsArrayOfSimplePrim(actual, expected)
   ) {
-    return;
+    return
   }
 
-  actual = _convertModelsToPlain(actual);
+  actual = _convertModelsToPlain(actual)
 
-  let expectedPaths = _getObjectPaths(expected);
+  let expectedPaths = _getObjectPaths(expected)
   if (isEqual) {
-    let actualPaths = _getObjectPaths(actual);
-    actualPaths = _.sortBy(actualPaths);
-    expectedPaths = _.sortBy(expectedPaths);
-    should(actualPaths).eql(expectedPaths);
+    let actualPaths = _getObjectPaths(actual)
+    actualPaths = _.sortBy(actualPaths)
+    expectedPaths = _.sortBy(expectedPaths)
+    should(actualPaths).eql(expectedPaths)
   }
 
-  let path;
+  let path
   try {
     for (let i = 0; i < expectedPaths.length; i++) {
-      path = expectedPaths[i];
-      let field = _getActualField(path);
-      let actualVal = _.get(actual, path);
-      let expectedVal = _.get(expected, path);
-      _assert(field, actualVal, expectedVal);
+      path = expectedPaths[i]
+      let field = _getActualField(path)
+      let actualVal = _.get(actual, path)
+      let expectedVal = _.get(expected, path)
+      _assert(field, actualVal, expectedVal)
     }
   } catch (err) {
-    let newErr = new Error(`${err.message} at path ${path}`);
-    throw newErr;
+    let newErr = new Error(`${err.message} at path ${path}`)
+    throw newErr
   }
-};
+}
 
 exports.assertResponse = (res, expectedStatus, expectedBody) => {
   if (expectedStatus === 204) {
-    should(res.headers['content-type']).be.undefined();
-    should(res.body).be.empty();
+    should(res.headers['content-type']).be.undefined()
+    should(res.body).be.empty()
   } else {
-    should(res.headers['content-type']).match(/application\/json/);
-    exports.assert(res.body, expectedBody);
+    should(res.headers['content-type']).match(/application\/json/)
+    exports.assert(res.body, expectedBody)
   }
-};
+}
 
 exports.assertFn = ({ inst, fnName, callCount = 1, nCall = 0, expectedArgs, expectedMultipleArgs }) => {
-  let assertion;
+  let assertion
 
   if (!expectedArgs && !expectedMultipleArgs) {
-    assertion = inst[fnName].called;
-    should(assertion).equal(false, `Expected that ${fnName} wouldn't be called`);
-    return;
+    assertion = inst[fnName].called
+    should(assertion).equal(false, `Expected that ${fnName} wouldn't be called`)
+    return
   }
 
-  assertion = inst[fnName].callCount;
-  let calledMessage = callCount === 1 ? 'once' : `${callCount} times`;
-  should(assertion).equal(callCount, `Expected that ${fnName} called ${calledMessage}`);
+  assertion = inst[fnName].callCount
+  let calledMessage = callCount === 1 ? 'once' : `${callCount} times`
+  should(assertion).equal(callCount, `Expected that ${fnName} called ${calledMessage}`)
 
   if (expectedArgs === '_without-args_') {
-    assertion = inst[fnName].getCall(nCall).calledWithExactly();
-    should(assertion).equal(true, `Expected that ${fnName} called without args`);
+    assertion = inst[fnName].getCall(nCall).calledWithExactly()
+    should(assertion).equal(true, `Expected that ${fnName} called without args`)
   } else if (expectedMultipleArgs) {
-    assertion = inst[fnName].getCall(nCall).calledWithExactly(...expectedMultipleArgs);
-    should(assertion).equal(true, `Expected that ${fnName} called with multiple args`);
+    assertion = inst[fnName].getCall(nCall).calledWithExactly(...expectedMultipleArgs)
+    should(assertion).equal(true, `Expected that ${fnName} called with multiple args`)
   } else {
-    assertion = inst[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs));
-    should(assertion).equal(true, `Expected that ${fnName} called with single arg`);
+    assertion = inst[fnName].getCall(nCall).calledWithExactly(exports.sinonMatch(expectedArgs))
+    should(assertion).equal(true, `Expected that ${fnName} called with single arg`)
   }
-};
+}
 
 exports.sinonMatch = (expected) => {
   return _sinon.match(actual => {
     try {
-      exports.assert(actual, expected);
-      return true;
+      exports.assert(actual, expected)
+      return true
     } catch (err) {
-      let newErr = new Error('sinon.match AssertionError: ' + err.message);
-      throw newErr;
+      let newErr = new Error('sinon.match AssertionError: ' + err.message)
+      throw newErr
     }
-  });
-};
+  })
+}
 
 function _convertModelsToPlain(actual) {
   if (_isMongooseModel(actual)) {
-    return actual.toObject();
+    return actual.toObject()
   }
 
   if (_.isArray(actual)) {
     return _.map(actual, item => {
       if (_isMongooseModel(actual)) {
-        return item.toObject();
+        return item.toObject()
       }
-      return item;
-    });
+      return item
+    })
   }
 
-  return actual;
+  return actual
 }
 
 function _assert(field, actual, expected) {
   if (field === '_id' || expected instanceof bson.ObjectId) {
-    _assertObjectId(actual, expected);
+    _assertObjectId(actual, expected)
   } else if (field === '__v') {
-    should(actual).instanceOf(Number);
+    should(actual).instanceOf(Number)
   } else if (field === 'createdAt') {
-    should(actual).instanceOf(Date);
+    should(actual).instanceOf(Date)
   } else if (field === 'updatedAt') {
-    should(actual).instanceOf(Date);
+    should(actual).instanceOf(Date)
   } else if (expected instanceof RegExp) {
-    should(actual).match(expected);
+    should(actual).match(expected)
   } else if (expected === '_mock_') {
-    should(actual).be.ok();
+    should(actual).be.ok()
   } else {
-    exports.assert(actual, expected);
+    exports.assert(actual, expected)
   }
 }
 
 function _assertObjectId(actual, expected) {
   if (expected === '_mock_') {
-    should(_safeToString(actual)).match(/^[a-z|\d]{24}$/);
+    should(_safeToString(actual)).match(/^[a-z|\d]{24}$/)
   } else {
-    should(_safeToString(actual)).equal(_safeToString(expected));
+    should(_safeToString(actual)).equal(_safeToString(expected))
   }
 }
 
 function _assertIfExpectedIsNil(actual, expected) {
   if (!_.isNil(expected)) {
-    return false;
+    return false
   }
-  should(actual).not.be.ok();
-  return true;
+  should(actual).not.be.ok()
+  return true
 }
 
 function _assertIfExpectedIsArrayOfSimplePrim(actual, expected) {
   if (!_.isArray(expected) || !_.every(expected, _isSimplePrim)) {
-    return false;
+    return false
   }
-  should(actual).eql(expected);
+  should(actual).eql(expected)
 }
 
 function _assertIfExpectedIsSimplePrim(actual, expected) {
   if (!_isSimplePrim(expected)) {
-    return false;
+    return false
   }
-  should(actual).eql(expected);
-  return true;
+  should(actual).eql(expected)
+  return true
 }
 
 function _isSimplePrim(prim) {
@@ -161,40 +161,40 @@ function _isSimplePrim(prim) {
          _.isString(prim) ||
          _.isDate(prim) ||
          _.isSymbol(prim) ||
-         _.isRegExp(prim);
+         _.isRegExp(prim)
 }
 
 function _isMongooseModel(val) {
-  return _.get(val, 'constructor.name') === 'model' && _.isFunction(val.toObject);
+  return _.get(val, 'constructor.name') === 'model' && _.isFunction(val.toObject)
 }
 
 function _safeToString(val) {
-  return _.isNil(val) ? val : val.toString();
+  return _.isNil(val) ? val : val.toString()
 }
 
 function _getObjectPaths(item, curPath = '', isArray = false) {
-  let paths = [];
+  let paths = []
   _.each(item, (val, key) => {
     if (val instanceof bson.ObjectId) {
-      val = _safeToString(val);
+      val = _safeToString(val)
     }
-    let newPath = isArray ? `${curPath}[${key}]` : `${curPath}.${key}`;
+    let newPath = isArray ? `${curPath}[${key}]` : `${curPath}.${key}`
     if (_isSimplePrim(val)) {
-      paths.push(newPath);
+      paths.push(newPath)
     }
     if (_.isArray(val)) {
-      paths = paths.concat(_getObjectPaths(val, newPath, true));
+      paths = paths.concat(_getObjectPaths(val, newPath, true))
     } else if (_.isObject(val)) {
-      paths = paths.concat(_getObjectPaths(val, newPath));
+      paths = paths.concat(_getObjectPaths(val, newPath))
     }
-  });
+  })
   if (!curPath) {
-    paths = _.map(paths, path => _.trimStart(path, '.'));
+    paths = _.map(paths, path => _.trimStart(path, '.'))
   }
-  return paths;
+  return paths
 }
 
 function _getActualField(path) {
-  let fields = path.split('.');
-  return _.last(fields);
+  let fields = path.split('.')
+  return _.last(fields)
 }
