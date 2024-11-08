@@ -1,4 +1,7 @@
 # n-assert
+
+## WARNING :warning:: This repo is not maintained anymore.
+
 Node.js assertion library.
 
 [![Build Status](https://github.com/AlexanderMac/n-assert/workflows/CI/badge.svg)](https://github.com/AlexanderMac/express-starter/actions?query=workflow%3ACI)
